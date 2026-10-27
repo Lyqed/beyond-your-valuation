@@ -1,0 +1,79 @@
+{
+  "modelVersion": "0.1.0",
+  "input": {
+    "exitCents": 10000000000,
+    "founderBps": 4000,
+    "investorBps": 4000,
+    "teamBps": 1000,
+    "investmentCents": 3000000000,
+    "preferenceMultipleBps": 10000,
+    "participation": "non-participating",
+    "feeBps": 200,
+    "taxBps": 2500,
+    "founderBasisCents": 0
+  },
+  "expected": {
+    "feesCents": 200000000,
+    "distributableCents": 9800000000,
+    "claimCents": 3000000000,
+    "preferenceCents": 3000000000,
+    "asConvertedInvestorCents": 3920000000,
+    "founderGrossCents": 3920000000,
+    "founderNetCents": 2940000000,
+    "investorCents": 3920000000,
+    "teamCents": 980000000,
+    "otherCents": 980000000,
+    "otherBps": 1000,
+    "taxCents": 980000000,
+    "taxableCents": 3920000000,
+    "decision": "conversion",
+    "decisionText": "Investors convert: $39,200,000.00 as common is at least $30,000,000.00 under the preference.",
+    "trace": [
+      {
+        "label": "Acquisition consideration",
+        "amountCents": 10000000000,
+        "calculation": "The fictional all-cash offer. No company debt, escrow or earn-out."
+      },
+      {
+        "label": "Transaction costs",
+        "amountCents": 200000000,
+        "calculation": "2% × $100,000,000.00, deducted before distributions."
+      },
+      {
+        "label": "Available to shareholders",
+        "amountCents": 9800000000,
+        "calculation": "$100,000,000.00 − $2,000,000.00"
+      },
+      {
+        "label": "Investors receive",
+        "amountCents": 3920000000,
+        "calculation": "Investors convert: $39,200,000.00 as common is at least $30,000,000.00 under the preference."
+      },
+      {
+        "label": "Team receives",
+        "amountCents": 980000000,
+        "calculation": "10% fully diluted ownership, treated as already exercised common shares."
+      },
+      {
+        "label": "Other common holders receive",
+        "amountCents": 980000000,
+        "calculation": "10% fully diluted ownership. Common proceeds use the selected waterfall."
+      },
+      {
+        "label": "Your gross proceeds",
+        "amountCents": 3920000000,
+        "calculation": "40% of the distributable pool."
+      },
+      {
+        "label": "Illustrative founder tax",
+        "amountCents": 980000000,
+        "calculation": "25% × max(gross proceeds − $0.00 basis, 0). No jurisdiction, reliefs or tax advice implied."
+      },
+      {
+        "label": "Your net cash",
+        "amountCents": 2940000000,
+        "calculation": "$39,200,000.00 − $9,800,000.00"
+      }
+    ]
+  }
+}

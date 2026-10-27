@@ -1,0 +1,149 @@
+import assert from 'node:assert/strict';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+
+const { chromium, webkit } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const base = process.env.BASE_URL || 'http://127.0.0.1:3048';
+await mkdir('test-results', { recursive: true });
+const reports = [];
+
+async function textIs(page, id, text) {
+  await page.waitForFunction(({ id, text }) => document.querySelector(`[data-testid="${id}"]`)?.textContent === text, { id, text });
+}
+async function noOverflow(page) {
+  const widths = await page.evaluate(() => ({ document: document.documentElement.scrollWidth, viewport: innerWidth }));
+  assert(widths.document <= widths.viewport, `Horizontal overflow: ${JSON.stringify(widths)}`);
+}
+
+for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', chromium, 390], ['webkit', webkit, 390]]) {
+  const browser = await engine.launch({ headless: true });
+  const context = await browser.newContext({ viewport: { width, height: 950 }, reducedMotion: 'reduce' });
+  const errors = [], externalRequests = [], failedResponses = [];
+  const attach = page => {
+    page.setDefaultTimeout(15_000);
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== new URL(base).origin) externalRequests.push(request.url()); });
+    page.on('response', response => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
+  };
+  await context.addInitScript(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => Promise.reject(new Error('Exercise the manual copy fallback.')) } }));
+  const page = await context.newPage(); attach(page);
+  try {
+    await page.goto(base, { waitUntil: 'networkidle' });
+    await page.evaluate(() => document.fonts.ready);
+    await textIs(page, 'founder-net', '$29.4m');
+    await textIs(page, 'retained-loss', '$400k');
+    await textIs(page, 'insurance-gap', '$450k');
+    await noOverflow(page);
+    await page.screenshot({ path: `test-results/${name}-${width}-hero.png` });
+
+    await page.getByRole('button', { name: 'Find out', exact: true }).click();
+    assert(await page.locator('#exit h2').isVisible());
+    await page.screenshot({ path: `test-results/${name}-${width}-deal.png` });
+    await page.getByRole('button', { name: /Take the preference\. Then share\./ }).click();
+    await textIs(page, 'founder-net', '$20.4m');
+    await page.getByRole('button', { name: '2× their investment', exact: true }).click();
+    await textIs(page, 'founder-net', '$11.4m');
+    await page.getByRole('button', { name: /Take the preference\. Or convert\./ }).click();
+    await textIs(page, 'founder-net', '$19m');
+    await page.getByRole('button', { name: '1× their investment', exact: true }).click();
+    await page.getByRole('button', { name: 'Show every step', exact: true }).click();
+    await page.locator('dialog[open]').waitFor();
+    assert.match(await page.locator('dialog').innerText(), /29,400,000\.00/);
+    await noOverflow(page);
+    await page.screenshot({ path: `test-results/${name}-${width}-receipt.png` });
+    await page.keyboard.press('Escape');
+    await page.locator('dialog[open]').waitFor({ state: 'hidden' });
+
+    await page.getByLabel('The company sells for', { exact: true }).focus();
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await page.getByLabel('The company sells for', { exact: true }).inputValue(), '101');
+    await page.keyboard.press('ArrowLeft');
+    await textIs(page, 'founder-net', '$29.4m');
+    await page.getByText('Open the rest of the deal', { exact: false }).click();
+    await page.getByLabel('Illustrative founder tax rate', { exact: true }).fill('30');
+    await textIs(page, 'founder-net', '$27.4m');
+    await page.getByLabel('Illustrative founder tax rate', { exact: true }).fill('25');
+    await page.getByText('Open the rest of the deal', { exact: false }).click();
+
+    await page.getByRole('button', { name: 'Try all at once ↗', exact: true }).click();
+    await textIs(page, 'liquidity-gap', '$462.5k');
+    await page.locator('.liquidity-result').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `test-results/${name}-${width}-liquidity.png` });
+    await page.getByRole('button', { name: 'Room to move', exact: true }).click();
+    assert(!(await page.locator('.liquidity-result').getAttribute('class')).includes('has-gap'));
+    await page.getByRole('button', { name: 'Paper rich', exact: true }).click();
+    await textIs(page, 'liquidity-gap', '$462.5k');
+    await page.getByRole('button', { name: 'Follow your $29.4m', exact: true }).click();
+    assert.equal(await page.locator('.allocation-panel .panel-heading strong').textContent(), '$29.4m');
+    await page.getByRole('button', { name: 'The $5m example', exact: true }).click();
+    await textIs(page, 'liquidity-gap', '$462.5k');
+
+    await page.getByRole('button', { name: 'Day 30', exact: true }).click();
+    await textIs(page, 'insurance-gap', '$0');
+    await page.getByRole('button', { name: /Ransom payments/ }).click();
+    await textIs(page, 'retained-loss', '$200k');
+    await page.getByRole('button', { name: /Ransom payments/ }).click();
+    await page.getByLabel('Overall policy limit', { exact: true }).fill('0');
+    await textIs(page, 'retained-loss', '$1.2m');
+    await textIs(page, 'insurance-gap', '$450k');
+    await page.getByLabel('Overall policy limit', { exact: true }).fill('1');
+    await textIs(page, 'insurance-gap', '$0');
+    await page.locator('.timing-panel').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `test-results/${name}-${width}-timing.png` });
+
+    await page.getByRole('button', { name: 'Send someone this scenario', exact: false }).click();
+    await page.locator('dialog[open]').waitFor();
+    const shareURL = await page.getByLabel('Scenario URL', { exact: true }).inputValue();
+    const shared = JSON.parse(decodeURIComponent(new URL(shareURL).hash.slice(3)));
+    assert.equal(shared.insurance.paymentDelayDays, 30);
+    assert.equal(shared.portfolio.marketShock, true);
+    const recipient = await context.newPage(); attach(recipient);
+    await recipient.goto(shareURL, { waitUntil: 'networkidle' });
+    await textIs(recipient, 'founder-net', '$29.4m');
+    await textIs(recipient, 'liquidity-gap', '$462.5k');
+    await textIs(recipient, 'insurance-gap', '$0');
+    await noOverflow(recipient);
+    await recipient.close();
+    await page.getByRole('button', { name: 'Close calculation', exact: true }).click();
+
+    const downloading = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Download the numbers', exact: false }).click();
+    const download = await downloading;
+    const report = JSON.parse(await readFile(await download.path(), 'utf8'));
+    assert.equal(report.results.exit.founderNetCents, 2_940_000_000);
+    assert.equal(report.results.portfolio.shortfallCents, 46_250_000);
+    assert.equal(report.results.insurance.shortfallCents, 0);
+    assert.equal(report.methodologyVersion, '0.1.0');
+
+    await page.getByRole('button', { name: 'Start over', exact: true }).click();
+    await textIs(page, 'insurance-gap', '$450k');
+    await textIs(page, 'liquidity-gap', '$150k');
+    if (name === 'chromium' && width === 1440) {
+      for (const checkWidth of [320, 768, 1920]) { await page.setViewportSize({ width: checkWidth, height: 950 }); await noOverflow(page); }
+      await page.setViewportSize({ width, height: 950 });
+      const zero = { ...shared, exit: { ...shared.exit, founderBps: 10_000, teamBps: 0, investorBps: 0, investmentCents: 0 } };
+      const edge = await context.newPage(); attach(edge);
+      await edge.goto(`${base}/#s=${encodeURIComponent(JSON.stringify(zero))}`, { waitUntil: 'networkidle' });
+      await textIs(edge, 'founder-net', '$73.5m');
+      await edge.getByText('Open the rest of the deal', { exact: false }).click();
+      assert.equal(await edge.getByLabel('Capital invested', { exact: true }).getAttribute('max'), '0');
+      await edge.getByLabel('Your ownership', { exact: true }).fill('90');
+      await edge.getByLabel('Investors’ ownership', { exact: true }).fill('10');
+      await edge.getByLabel('Capital invested', { exact: true }).fill('30');
+      await noOverflow(edge); await edge.close();
+    }
+    await page.goto(`${base}/methodology/`, { waitUntil: 'networkidle' });
+    assert.match(await page.locator('h1').innerText(), /Every number has/);
+    await noOverflow(page);
+    await page.goto(`${base}/#s=invalid`, { waitUntil: 'networkidle' });
+    await textIs(page, 'founder-net', '$29.4m');
+    assert.match(await page.locator('.toast[role="status"]').innerText(), /invalid/);
+    assert.deepEqual(errors, []); assert.deepEqual(externalRequests, []); assert.deepEqual(failedResponses, []);
+    reports.push({ browser: name, width, result: 'passed', runtimeErrors: errors, externalRequests, failedResponses });
+    console.log(`${name} ${width}px: interactions, calculations, sharing, download and layout passed`);
+  } catch (error) {
+    await page.screenshot({ path: `test-results/FAILED-${name}-${width}.png`, fullPage: true });
+    console.error({ errors, externalRequests, failedResponses });
+    throw error;
+  } finally { await browser.close(); }
+}
+await writeFile('test-results/browser-report.json', JSON.stringify(reports, null, 2) + '\n');

@@ -1,0 +1,140 @@
+{
+  "modelVersion": "0.1.0",
+  "input": {
+    "capitalCents": 500000000,
+    "allocationsBps": [
+      300,
+      1700,
+      1000,
+      3000,
+      2500,
+      1500
+    ],
+    "marketShock": true,
+    "fxShock": true,
+    "capitalCallCents": 50000000,
+    "familyExpenseIlsCents": 180000000,
+    "ventureCallCents": 50000000,
+    "fxRateMicros": 3600000
+  },
+  "expected": {
+    "assets": [
+      {
+        "id": "cash",
+        "label": "Cash",
+        "lossBps": 0,
+        "liquid": true,
+        "beforeCents": 15000000,
+        "valueCents": 15000000,
+        "ownershipBps": 300
+      },
+      {
+        "id": "equities",
+        "label": "Public shares",
+        "lossBps": 3500,
+        "liquid": true,
+        "beforeCents": 85000000,
+        "valueCents": 55250000,
+        "ownershipBps": 1700
+      },
+      {
+        "id": "bonds",
+        "label": "Bonds",
+        "lossBps": 800,
+        "liquid": true,
+        "beforeCents": 50000000,
+        "valueCents": 46000000,
+        "ownershipBps": 1000
+      },
+      {
+        "id": "property",
+        "label": "Property",
+        "lossBps": 1200,
+        "liquid": false,
+        "beforeCents": 150000000,
+        "valueCents": 132000000,
+        "ownershipBps": 3000
+      },
+      {
+        "id": "privateEquity",
+        "label": "Private equity",
+        "lossBps": 2000,
+        "liquid": false,
+        "beforeCents": 125000000,
+        "valueCents": 100000000,
+        "ownershipBps": 2500
+      },
+      {
+        "id": "venture",
+        "label": "Your next company",
+        "lossBps": 5000,
+        "liquid": false,
+        "beforeCents": 75000000,
+        "valueCents": 37500000,
+        "ownershipBps": 1500
+      }
+    ],
+    "totalCents": 385750000,
+    "liquidCents": 116250000,
+    "cashCents": 15000000,
+    "lockedCents": 269500000,
+    "effectiveFxMicros": 2880000,
+    "expenseUsdCents": 62500000,
+    "dueCents": 162500000,
+    "shortfallCents": 46250000,
+    "surplusCents": 0,
+    "purchasingPowerIlsCents": 1110960000,
+    "trace": [
+      {
+        "label": "Cash",
+        "amountCents": 15000000,
+        "calculation": "$150,000.00 × 100%. Available within 30 days in this model."
+      },
+      {
+        "label": "Public shares",
+        "amountCents": 55250000,
+        "calculation": "$850,000.00 × 65%. Available within 30 days in this model."
+      },
+      {
+        "label": "Bonds",
+        "amountCents": 46000000,
+        "calculation": "$500,000.00 × 92%. Available within 30 days in this model."
+      },
+      {
+        "label": "Property",
+        "amountCents": 132000000,
+        "calculation": "$1,500,000.00 × 88%. No sale available within 30 days in this model."
+      },
+      {
+        "label": "Private equity",
+        "amountCents": 100000000,
+        "calculation": "$1,250,000.00 × 80%. No sale available within 30 days in this model."
+      },
+      {
+        "label": "Your next company",
+        "amountCents": 37500000,
+        "calculation": "$750,000.00 × 50%. No sale available within 30 days in this model."
+      },
+      {
+        "label": "Available within 30 days",
+        "amountCents": 116250000,
+        "calculation": "Cash + stressed public shares + stressed bonds, before paying obligations. No sale fees or taxes modeled."
+      },
+      {
+        "label": "Family expense in USD",
+        "amountCents": 62500000,
+        "calculation": "₪1,800,000.00 ÷ 2.88 ILS per USD. Rounded up to a cent."
+      },
+      {
+        "label": "Total due within 30 days",
+        "amountCents": 162500000,
+        "calculation": "Private equity call $500,000.00 + new-company call $500,000.00 + family expense $625,000.00."
+      },
+      {
+        "label": "Funding shortfall",
+        "amountCents": 46250000,
+        "calculation": "max(obligations − available funds, 0). No asset purchases or payments have yet been posted."
+      }
+    ]
+  }
+}

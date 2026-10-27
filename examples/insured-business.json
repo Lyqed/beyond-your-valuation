@@ -1,0 +1,78 @@
+{
+  "modelVersion": "0.1.0",
+  "input": {
+    "grossLossCents": 120000000,
+    "deductibleCents": 10000000,
+    "policyLimitCents": 100000000,
+    "interruptionSublimitCents": 50000000,
+    "interruptionCovered": true,
+    "ransomCovered": false,
+    "interruptionDays": 5,
+    "waitingDays": 0,
+    "paymentDelayDays": 60,
+    "businessCashCents": 75000000
+  },
+  "expected": {
+    "responseCents": 60000000,
+    "interruptionCents": 30000000,
+    "ransomCents": 30000000,
+    "coveredInterruptionCents": 30000000,
+    "coveredRansomCents": 0,
+    "eligibleCents": 90000000,
+    "deductibleAppliedCents": 10000000,
+    "insurerCents": 80000000,
+    "retainedCents": 40000000,
+    "excludedCents": 30000000,
+    "limitGapCents": 0,
+    "paidWithin30DaysCents": 0,
+    "shortfallCents": 45000000,
+    "uninsuredShortfallCents": 45000000,
+    "trace": [
+      {
+        "label": "Gross incident loss",
+        "amountCents": 120000000,
+        "calculation": "Fictional loss: 50% response costs, 25% lost income, 25% ransom. All amounts due within 30 days."
+      },
+      {
+        "label": "Eligible response costs",
+        "amountCents": 60000000,
+        "calculation": "All modeled response costs qualify under this fictional contract."
+      },
+      {
+        "label": "Eligible interruption loss",
+        "amountCents": 30000000,
+        "calculation": "min($300,000.00 × 5/5 covered days, $500,000.00 sublimit)."
+      },
+      {
+        "label": "Eligible ransom loss",
+        "amountCents": 0,
+        "calculation": "Ransom is excluded."
+      },
+      {
+        "label": "Total eligible loss",
+        "amountCents": 90000000,
+        "calculation": "Eligible categories after exclusions, waiting period and the interruption sublimit."
+      },
+      {
+        "label": "Deductible applied",
+        "amountCents": 10000000,
+        "calculation": "min($100,000.00 deductible, eligible loss). One aggregate deductible."
+      },
+      {
+        "label": "Insurer payment",
+        "amountCents": 80000000,
+        "calculation": "min($1,000,000.00 overall limit, eligible loss − applied deductible). Assumed payment on day 60."
+      },
+      {
+        "label": "Loss retained by business",
+        "amountCents": 40000000,
+        "calculation": "$1,200,000.00 − $800,000.00. Premiums and claim disputes are not modeled."
+      },
+      {
+        "label": "Cash gap within 30 days",
+        "amountCents": 45000000,
+        "calculation": "max($1,200,000.00 − $750,000.00 cash − $0.00 timely insurance payment, 0)."
+      }
+    ]
+  }
+}
