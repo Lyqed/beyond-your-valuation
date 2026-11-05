@@ -1,20 +1,20 @@
 # What You Actually Own
 
-**The number on paper is not the number in your pocket.**
+Explore how ownership, deal terms and payment timing affect available cash.
 
-An interactive, open-source experiment about startup exits, liquidity and insurance. Start with a fictional $100 million sale, change the deal, and follow the consequences. No account or financial-data upload is needed. Calculations run in your browser.
+An interactive, open-source model of startup exits, liquidity and insurance. Start with a fictional $100 million sale and change the assumptions to see the results. No account or financial-data upload is needed. Calculations run in your browser.
 
 [Open the experience](https://what-you-actually-own.motbot146.chatgpt.site) · [Read the assumptions](https://what-you-actually-own.motbot146.chatgpt.site/methodology/)
 
-![A fictional $100 million exit. How much is actually yours?](public/og.png)
+![What You Actually Own: fictional exit, liquidity and insurance scenarios](public/og.png)
 
 ## Three chapters
 
 | Chapter | Change | Inspect |
 | --- | --- | --- |
-| The exit | Price, ownership, preference, participation, costs and illustrative tax | Who receives each part of the acquisition consideration |
-| The day after | Allocation, joint market shock, currency shock and cash obligations | Assets available within 30 days versus obligations due |
-| The unexpected | Deductible, limits, exclusions, waiting period and payment timing | Insurer payment, retained incident loss and temporary cash gap |
+| Exit proceeds | Price, ownership, preference, participation, costs and illustrative tax | Who receives each part of the acquisition consideration |
+| Liquidity | Allocation, joint market shock, currency shock and cash obligations | Assets available within 30 days versus obligations due |
+| Insurance | Deductible, limits, exclusions, waiting period and payment timing | Insurer payment, retained incident loss and temporary cash gap |
 
 Click a result to see the calculation. Share a reproducible scenario using a URL fragment, or download its inputs, exact outputs and calculation receipts as JSON.
 

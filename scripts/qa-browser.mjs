@@ -35,14 +35,14 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await noOverflow(page);
     await page.screenshot({ path: `test-results/${name}-${width}-hero.png` });
 
-    await page.getByRole('button', { name: 'Find out', exact: true }).click();
+    await page.getByRole('button', { name: /Exit proceeds/ }).click();
     assert(await page.locator('#exit h2').isVisible());
     await page.screenshot({ path: `test-results/${name}-${width}-deal.png` });
-    await page.getByRole('button', { name: /Take the preference\. Then share\./ }).click();
+    await page.getByRole('button', { name: /^Participating/ }).click();
     await textIs(page, 'founder-net', '$20.4m');
     await page.getByRole('button', { name: '2× their investment', exact: true }).click();
     await textIs(page, 'founder-net', '$11.4m');
-    await page.getByRole('button', { name: /Take the preference\. Or convert\./ }).click();
+    await page.getByRole('button', { name: /^Non-participating/ }).click();
     await textIs(page, 'founder-net', '$19m');
     await page.getByRole('button', { name: '1× their investment', exact: true }).click();
     await page.getByRole('button', { name: 'Show every step', exact: true }).click();
@@ -58,21 +58,21 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     assert.equal(await page.getByLabel('The company sells for', { exact: true }).inputValue(), '101');
     await page.keyboard.press('ArrowLeft');
     await textIs(page, 'founder-net', '$29.4m');
-    await page.getByText('Open the rest of the deal', { exact: false }).click();
+    await page.getByText('More deal assumptions', { exact: false }).click();
     await page.getByLabel('Illustrative founder tax rate', { exact: true }).fill('30');
     await textIs(page, 'founder-net', '$27.4m');
     await page.getByLabel('Illustrative founder tax rate', { exact: true }).fill('25');
-    await page.getByText('Open the rest of the deal', { exact: false }).click();
+    await page.getByText('More deal assumptions', { exact: false }).click();
 
-    await page.getByRole('button', { name: 'Try all at once ↗', exact: true }).click();
+    await page.getByRole('button', { name: 'Apply all events', exact: true }).click();
     await textIs(page, 'liquidity-gap', '$462.5k');
     await page.locator('.liquidity-result').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/${name}-${width}-liquidity.png` });
-    await page.getByRole('button', { name: 'Room to move', exact: true }).click();
+    await page.getByRole('button', { name: 'More liquid', exact: true }).click();
     assert(!(await page.locator('.liquidity-result').getAttribute('class')).includes('has-gap'));
-    await page.getByRole('button', { name: 'Paper rich', exact: true }).click();
+    await page.getByRole('button', { name: 'Mostly illiquid', exact: true }).click();
     await textIs(page, 'liquidity-gap', '$462.5k');
-    await page.getByRole('button', { name: 'Follow your $29.4m', exact: true }).click();
+    await page.getByRole('button', { name: 'Use $29.4m in the liquidity model', exact: true }).click();
     assert.equal(await page.locator('.allocation-panel .panel-heading strong').textContent(), '$29.4m');
     await page.getByRole('button', { name: 'The $5m example', exact: true }).click();
     await textIs(page, 'liquidity-gap', '$462.5k');
@@ -90,7 +90,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.locator('.timing-panel').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/${name}-${width}-timing.png` });
 
-    await page.getByRole('button', { name: 'Send someone this scenario', exact: false }).click();
+    await page.getByRole('button', { name: 'Share scenario', exact: true }).last().click();
     await page.locator('dialog[open]').waitFor();
     const shareURL = await page.getByLabel('Scenario URL', { exact: true }).inputValue();
     const shared = JSON.parse(decodeURIComponent(new URL(shareURL).hash.slice(3)));
@@ -124,15 +124,15 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
       const edge = await context.newPage(); attach(edge);
       await edge.goto(`${base}/#s=${encodeURIComponent(JSON.stringify(zero))}`, { waitUntil: 'networkidle' });
       await textIs(edge, 'founder-net', '$73.5m');
-      await edge.getByText('Open the rest of the deal', { exact: false }).click();
+      await edge.getByText('More deal assumptions', { exact: false }).click();
       assert.equal(await edge.getByLabel('Capital invested', { exact: true }).getAttribute('max'), '0');
-      await edge.getByLabel('Your ownership', { exact: true }).fill('90');
+      await edge.getByLabel('Founder ownership', { exact: true }).fill('90');
       await edge.getByLabel('Investors’ ownership', { exact: true }).fill('10');
       await edge.getByLabel('Capital invested', { exact: true }).fill('30');
       await noOverflow(edge); await edge.close();
     }
     await page.goto(`${base}/methodology/`, { waitUntil: 'networkidle' });
-    assert.match(await page.locator('h1').innerText(), /Every number has/);
+    assert.match(await page.locator('h1').innerText(), /Assumptions and calculations/);
     await noOverflow(page);
     await page.goto(`${base}/#s=invalid`, { waitUntil: 'networkidle' });
     await textIs(page, 'founder-net', '$29.4m');
