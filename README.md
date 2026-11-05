@@ -16,7 +16,7 @@ An interactive, open-source model of startup exits, liquidity and insurance. Sta
 | Liquidity | Allocation, joint market shock, currency shock and cash obligations | Assets available within 30 days versus obligations due |
 | Insurance | Deductible, limits, exclusions, waiting period and payment timing | Insurer payment, retained incident loss and temporary cash gap |
 
-Click a result to see the calculation. Share a reproducible scenario using a URL fragment, or download its inputs, exact outputs and calculation receipts as JSON.
+Click a result to see the calculation, or download its inputs, exact outputs and calculation receipts as JSON. Existing scenario links continue to load their saved inputs.
 
 The default exit produces $29.4 million of founder net cash. Changing only the investor's preference from non-participating to uncapped participating produces $20.4 million. These are outputs of the stated fictional terms, not estimates of a real founder's proceeds.
 

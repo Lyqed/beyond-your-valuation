@@ -5,7 +5,7 @@ import { calculateExit, type ExitInput } from '@/packages/equity-engine';
 import { assetDefinitions, calculatePortfolio, portfolioPresets, type PortfolioInput } from '@/packages/portfolio-engine';
 import { calculateInsurance, type InsuranceInput } from '@/packages/insurance-engine';
 import { exactMoney, type TraceRow } from '@/packages/shared/money';
-import { decodeScenario, encodeScenario, freshScenario, type Scenario } from '@/packages/scenario-schema';
+import { decodeScenario, freshScenario, type Scenario } from '@/packages/scenario-schema';
 
 const sourceURL = 'https://github.com/Lyqed/what-you-actually-own';
 const million = 100_000_000;
@@ -33,12 +33,10 @@ function ChapterHeading({ number, title, subtitle }: { number: string; title: Re
 
 export default function Experience() {
   const [scenario, setScenario] = useState<Scenario>(freshScenario);
-  const [modal, setModal] = useState<'exit' | 'portfolio' | 'insurance' | 'share' | null>(null);
+  const [modal, setModal] = useState<'exit' | 'portfolio' | 'insurance' | null>(null);
   const [toast, setToast] = useState('');
   const [active, setActive] = useState('exit');
   const dialog = useRef<HTMLDialogElement>(null);
-  const shareInput = useRef<HTMLInputElement>(null);
-  const [shareURL, setShareURL] = useState('');
   const exit = useMemo(() => calculateExit(scenario.exit), [scenario.exit]);
   const nonParticipating = useMemo(() => calculateExit({ ...scenario.exit, participation: 'non-participating' }), [scenario.exit]);
   const participating = useMemo(() => calculateExit({ ...scenario.exit, participation: 'participating' }), [scenario.exit]);
@@ -62,12 +60,6 @@ export default function Experience() {
   useEffect(() => { if (modal) dialog.current?.showModal(); else dialog.current?.close(); }, [modal]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(''), 6500); return () => clearTimeout(timer); }, [toast]);
 
-  async function share() {
-    const url = `${window.location.origin}${window.location.pathname}#s=${encodeScenario(scenario)}`;
-    setShareURL(url);
-    try { await navigator.clipboard.writeText(url); setToast('Scenario link copied. It includes your current inputs.'); }
-    catch { setModal('share'); setTimeout(() => shareInput.current?.select(), 50); }
-  }
   function download() {
     const data = { ...scenario, methodologyVersion: '0.1.0', results: { exit, portfolio, insurance } };
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
@@ -93,7 +85,7 @@ export default function Experience() {
         <h1 id="intro-title">What happens to a<br />$100 million exit?</h1>
         <div className="hero-description"><p>Change the deal terms to see the founder’s net proceeds. Then explore what happens when cash is tied up or an insurance payment arrives late.</p><p className="hero-fine">Three fictional scenarios. You can inspect every calculation.</p></div>
       </section>
-      <nav className="chapter-nav" aria-label="Chapters"><div>{[['exit', '1', 'Exit proceeds'], ['portfolio', '2', 'Liquidity'], ['insurance', '3', 'Insurance']].map(([id, number, label]) => <button key={id} className={active === id ? 'selected' : ''} aria-current={active === id ? 'step' : undefined} onClick={() => go(id)}><span>{number}</span>{label}</button>)}</div><button className="share-small" onClick={share}>Share scenario <Arrow diagonal /></button></nav>
+      <nav className="chapter-nav" aria-label="Chapters"><div>{[['exit', '1', 'Exit proceeds'], ['portfolio', '2', 'Liquidity'], ['insurance', '3', 'Insurance']].map(([id, number, label]) => <button key={id} className={active === id ? 'selected' : ''} aria-current={active === id ? 'step' : undefined} onClick={() => go(id)}><span>{number}</span>{label}</button>)}</div></nav>
 
       <section className="chapter exit-chapter" id="exit">
         <ChapterHeading number="1" title="Exit proceeds" subtitle="Adjust the ownership and investor terms. All amounts are in USD." />
@@ -146,10 +138,10 @@ export default function Experience() {
         <div className={`timing-panel ${insurance.shortfallCents ? 'has-gap' : ''}`}><div><h3>Payment timing</h3><p>The loss is due within 30 days. Choose when the modeled insurance payment arrives.</p><div className="timing-buttons" role="group" aria-label="Insurance payment timing">{[15, 30, 60, 90].map(days => <button key={days} aria-pressed={ins.paymentDelayDays === days} onClick={() => updateInsurance({ paymentDelayDays: days })}>Day {days}</button>)}</div></div><div className="timing-result"><span>Funding shortfall within 30 days</span><strong data-testid="insurance-gap">{money(insurance.shortfallCents)}</strong><p>{ins.paymentDelayDays > 30 ? `${money(insurance.insurerCents)} of modeled insurance money arrives after the bills are due.` : 'The modeled insurance payment arrives within the 30-day window.'}</p><small>Business cash: {money(ins.businessCashCents)}. This fictional business is separate from the personal portfolio above. Payment timing is an assumption, not a claims forecast.</small></div></div>
       </section>
 
-      <section className="ending"><h2>Keep this scenario</h2><p>Share the current inputs, or download them with the results and calculation steps.</p><div className="ending-actions"><button className="button primary" onClick={share}>Share scenario <Arrow diagonal /></button><button className="button outline" onClick={download}>Download the numbers <span aria-hidden="true">↓</span></button></div><div className="ending-links"><a href="/methodology/">Assumptions and calculations</a><a href={sourceURL} target="_blank" rel="noreferrer">Source code on GitHub</a><button onClick={reset}>Start over</button></div></section>
+      <section className="ending"><h2>Keep this scenario</h2><p>Download the current inputs, results and calculation steps.</p><div className="ending-actions"><button className="button primary" onClick={download}>Download the numbers <span aria-hidden="true">↓</span></button></div><div className="ending-links"><a href="/methodology/">Assumptions and calculations</a><a href={sourceURL} target="_blank" rel="noreferrer">Source code on GitHub</a><button onClick={reset}>Start over</button></div></section>
     </main>
     <footer><a className="footer-brand" href="https://worthbuilding.org/" target="_blank" rel="noreferrer">An experiment worth building. <Arrow diagonal /></a><p>Created by <a href="https://antonbraverman.com/" target="_blank" rel="noreferrer">Anton Braverman</a>. MIT-licensed code.<br />Hypothetical examples. Educational use, not financial, tax, legal or insurance advice.</p><span>Calculated in your browser.<br />No account. No financial data upload.</span></footer>
     {toast && <div className="toast" role="status">{toast}<button aria-label="Dismiss message" onClick={() => setToast('')}>×</button></div>}
-    <dialog ref={dialog} className="math-dialog" onCancel={() => setModal(null)} onClose={() => setModal(null)} onClick={event => { if (event.target === dialog.current) { const r = dialog.current.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) setModal(null); } }} aria-labelledby="dialog-title"><div className="dialog-top"><span className="eyebrow">{modal === 'share' ? 'Share scenario' : 'Calculation details'}</span><button className="close-dialog" onClick={() => setModal(null)} aria-label="Close calculation">×</button></div><h2 id="dialog-title">{receipt?.title || 'Scenario link'}</h2>{receipt ? <><p className="dialog-note">{receipt.note}</p><ol className="trace-list">{receipt.rows.map((row, i) => <li key={`${row.label}-${i}`}><span className="trace-number">{String(i + 1).padStart(2, '0')}</span><div><div><h3>{row.label}</h3><strong>{exactMoney(row.amountCents)}</strong></div><p>{row.calculation}</p></div></li>)}</ol><a className="text-action" href="/methodology/">All assumptions and limitations <Arrow diagonal /></a></> : <><p className="dialog-note">The link includes these scenario inputs. Copy it to share the same calculations. The inputs stay in the URL fragment, which is not sent to the hosting server.</p><label className="share-label" htmlFor="scenario-url">Scenario URL</label><input id="scenario-url" className="share-input" ref={shareInput} value={shareURL} readOnly onFocus={e => e.target.select()} /><button className="button primary" onClick={() => shareInput.current?.select()}>Select the link</button></>}</dialog>
+    <dialog ref={dialog} className="math-dialog" onCancel={() => setModal(null)} onClose={() => setModal(null)} onClick={event => { if (event.target === dialog.current) { const r = dialog.current.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) setModal(null); } }} aria-labelledby="dialog-title"><div className="dialog-top"><span className="eyebrow">Calculation details</span><button className="close-dialog" onClick={() => setModal(null)} aria-label="Close calculation">×</button></div><h2 id="dialog-title">{receipt?.title}</h2>{receipt ? <><p className="dialog-note">{receipt.note}</p><ol className="trace-list">{receipt.rows.map((row, i) => <li key={`${row.label}-${i}`}><span className="trace-number">{String(i + 1).padStart(2, '0')}</span><div><div><h3>{row.label}</h3><strong>{exactMoney(row.amountCents)}</strong></div><p>{row.calculation}</p></div></li>)}</ol><a className="text-action" href="/methodology/">All assumptions and limitations <Arrow diagonal /></a></> : null}</dialog>
   </>;
 }

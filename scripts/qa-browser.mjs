@@ -24,7 +24,6 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== new URL(base).origin) externalRequests.push(request.url()); });
     page.on('response', response => { if (response.status() >= 400) failedResponses.push(`${response.status()} ${response.url()}`); });
   };
-  await context.addInitScript(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => Promise.reject(new Error('Exercise the manual copy fallback.')) } }));
   const page = await context.newPage(); attach(page);
   try {
     await page.goto(base, { waitUntil: 'networkidle' });
@@ -90,21 +89,6 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.locator('.timing-panel').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/${name}-${width}-timing.png` });
 
-    await page.getByRole('button', { name: 'Share scenario', exact: true }).last().click();
-    await page.locator('dialog[open]').waitFor();
-    const shareURL = await page.getByLabel('Scenario URL', { exact: true }).inputValue();
-    const shared = JSON.parse(decodeURIComponent(new URL(shareURL).hash.slice(3)));
-    assert.equal(shared.insurance.paymentDelayDays, 30);
-    assert.equal(shared.portfolio.marketShock, true);
-    const recipient = await context.newPage(); attach(recipient);
-    await recipient.goto(shareURL, { waitUntil: 'networkidle' });
-    await textIs(recipient, 'founder-net', '$29.4m');
-    await textIs(recipient, 'liquidity-gap', '$462.5k');
-    await textIs(recipient, 'insurance-gap', '$0');
-    await noOverflow(recipient);
-    await recipient.close();
-    await page.getByRole('button', { name: 'Close calculation', exact: true }).click();
-
     const downloading = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download the numbers', exact: false }).click();
     const download = await downloading;
@@ -113,6 +97,16 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     assert.equal(report.results.portfolio.shortfallCents, 46_250_000);
     assert.equal(report.results.insurance.shortfallCents, 0);
     assert.equal(report.methodologyVersion, '0.1.0');
+    const shared = { version: report.version, exit: report.exit, portfolio: report.portfolio, insurance: report.insurance };
+    assert.equal(shared.insurance.paymentDelayDays, 30);
+    assert.equal(shared.portfolio.marketShock, true);
+    const recipient = await context.newPage(); attach(recipient);
+    await recipient.goto(`${base}/#s=${encodeURIComponent(JSON.stringify(shared))}`, { waitUntil: 'networkidle' });
+    await textIs(recipient, 'founder-net', '$29.4m');
+    await textIs(recipient, 'liquidity-gap', '$462.5k');
+    await textIs(recipient, 'insurance-gap', '$0');
+    await noOverflow(recipient);
+    await recipient.close();
 
     await page.getByRole('button', { name: 'Start over', exact: true }).click();
     await textIs(page, 'insurance-gap', '$450k');
@@ -139,7 +133,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     assert.match(await page.locator('.toast[role="status"]').innerText(), /invalid/);
     assert.deepEqual(errors, []); assert.deepEqual(externalRequests, []); assert.deepEqual(failedResponses, []);
     reports.push({ browser: name, width, result: 'passed', runtimeErrors: errors, externalRequests, failedResponses });
-    console.log(`${name} ${width}px: interactions, calculations, sharing, download and layout passed`);
+    console.log(`${name} ${width}px: interactions, calculations, saved links, download and layout passed`);
   } catch (error) {
     await page.screenshot({ path: `test-results/FAILED-${name}-${width}.png`, fullPage: true });
     console.error({ errors, externalRequests, failedResponses });

@@ -39,7 +39,7 @@ output, .big-payout, .receipt-lines strong, .comparison-bars strong, .asset-row 
 .skip { position: fixed; z-index: 30; top: -100px; left: 20px; background: var(--accent); color: #fff; padding: 12px 18px; }
 .skip:focus { top: 12px; }
 .site-header, .hero, .chapter, .ending, footer { width: min(1120px, calc(100% - 96px)); margin-inline: auto; }
-.site-header { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 32px; border-bottom: 1px solid var(--line); }
+.site-header { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .brand { font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
 .header-links { display: flex; gap: 28px; align-items: center; }
 .header-links a { font-size: 13px; color: var(--muted); }
@@ -56,7 +56,6 @@ output, .big-payout, .receipt-lines strong, .comparison-bars strong, .asset-row 
 .chapter-nav button span { color: var(--muted); margin-right: 8px; font-size: 12px; }
 .chapter-nav button.selected { color: var(--accent); }
 .chapter-nav button.selected::after { content: ''; position: absolute; height: 2px; background: var(--accent); inset: auto 0 -1px; }
-.share-small { display: flex; align-items: center; gap: 7px; color: var(--muted); }
 .chapter { padding-top: 56px; scroll-margin-top: 60px; }
 .chapter-heading { display: flex; align-items: baseline; gap: 16px; margin-bottom: 30px; }
 .chapter-number { width: 14px; flex: none; color: var(--muted); font-size: 14px; }
@@ -145,7 +144,6 @@ output, .big-payout, .receipt-lines strong, .comparison-bars strong, .asset-row 
 .preset-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
 .asset-list { margin-top: 18px; }
 .asset-row { display: grid; grid-template-columns: 1fr 40px 70px; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-.asset-dot { display: none; }
 .asset-row small { font-size: 12px; color: var(--muted); display: block; margin-top: 1px; }
 .asset-row strong { font-weight: 500; text-align: right; }
 .asset-value { text-align: right; color: var(--muted); font-size: 13px; }
@@ -226,8 +224,6 @@ footer > span { text-align: right; }
 .trace-list strong { font-size: 13px; white-space: nowrap; font-weight: 500; }
 .trace-list p { font-size: 12px; line-height: 1.8; color: var(--muted); margin-top: 6px; }
 .trace-list li:last-child { color: var(--accent); }
-.share-label { display: block; font-size: 13px; margin-top: 22px; }
-.share-input { width: 100%; border: 1px solid var(--line); padding: 12px; border-radius: 4px; margin-block: 8px 20px; background: #fff; font-size: 13px; }
 .methodology { max-width: 800px; padding: 40px 32px 70px; margin: auto; }
 .methodology h1 { font-size: clamp(30px, 4vw, 40px); margin-block: 16px 22px; }
 .methodology > .lede { font-size: 17px; line-height: 1.8; color: var(--muted); }
@@ -273,7 +269,6 @@ footer > span { text-align: right; }
   .chapter-nav > div { width: 100%; justify-content: space-between; gap: 14px; }
   .chapter-nav button { font-size: 13px; min-height: 56px; }
   .chapter-nav button span { margin-right: 5px; font-size: 11px; }
-  .chapter-nav .share-small { display: none; }
   .chapter { padding-top: 36px; scroll-margin-top: 56px; }
   .chapter-heading { gap: 10px; margin-bottom: 24px; }
   .chapter-heading h2 { font-size: 25px; }
