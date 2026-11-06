@@ -13,6 +13,29 @@ async function noOverflow(page) {
   const widths = await page.evaluate(() => ({ document: document.documentElement.scrollWidth, viewport: innerWidth }));
   assert(widths.document <= widths.viewport, `Horizontal overflow: ${JSON.stringify(widths)}`);
 }
+async function renamedMetadata(page, methodology = false) {
+  const title = methodology ? 'Assumptions | Beyond Your Valuation' : 'Beyond Your Valuation';
+  const canonical = 'https://beyondyourvaluation.com' + (methodology ? '/methodology/' : '/');
+  assert.equal(await page.title(), title);
+  assert.equal(new URL(await page.locator('link[rel="canonical"]').getAttribute('href')).href, canonical);
+  assert.equal(new URL(await page.locator('meta[property="og:url"]').getAttribute('content')).href, canonical);
+  assert.equal(await page.locator('meta[property="og:title"]').getAttribute('content'), title);
+  assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute('content'), title);
+  assert.equal(await page.locator('meta[property="og:site_name"]').getAttribute('content'), 'Beyond Your Valuation');
+  for (const selector of ['meta[property="og:image"]', 'meta[name="twitter:image"]']) {
+    assert.equal(await page.locator(selector).getAttribute('content'), 'https://beyondyourvaluation.com/og.png');
+  }
+}
+async function brandFits(page) {
+  assert.equal(await page.locator('.brand').getAttribute('aria-label'), 'Beyond Your Valuation, home');
+  assert.match(await page.locator('.brand').innerText(), /beyond your\s+valuation\./);
+  const bounds = await page.evaluate(() => {
+    const brand = document.querySelector('.brand').getBoundingClientRect();
+    const links = document.querySelector('.header-links').getBoundingClientRect();
+    return {brandLeft: brand.left, brandRight: brand.right, linksLeft: links.left, linksRight: links.right, viewport: innerWidth};
+  });
+  assert(bounds.brandLeft >= 0 && bounds.brandRight <= bounds.linksLeft && bounds.linksRight <= bounds.viewport, `Brand/header overlap: ${JSON.stringify(bounds)}`);
+}
 
 for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', chromium, 390], ['webkit', webkit, 1440], ['webkit', webkit, 390]]) {
   const browser = await engine.launch({ headless: true });
@@ -28,6 +51,11 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
   try {
     await page.goto(base, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);
+    await renamedMetadata(page);
+    await brandFits(page);
+    assert.equal(await page.locator('.brand').getAttribute('href'), '#top');
+    assert.equal(await page.locator('.header-links a').first().getAttribute('href'), '/methodology/');
+    assert.equal(await page.locator('.source-link').getAttribute('href'), 'https://github.com/Lyqed/what-you-actually-own');
     await textIs(page, 'founder-net', '$29.4m');
     await textIs(page, 'retained-loss', '$400k');
     await textIs(page, 'insurance-gap', '$450k');
@@ -107,6 +135,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     const downloading = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download the numbers', exact: false }).click();
     const download = await downloading;
+    assert.equal(download.suggestedFilename(), 'beyond-your-valuation-scenario.json');
     const report = JSON.parse(await readFile(await download.path(), 'utf8'));
     assert.equal(report.results.exit.founderNetCents, 2_940_000_000);
     assert.equal(report.results.portfolio.shortfallCents, 46_250_000);
@@ -127,7 +156,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await textIs(page, 'insurance-gap', '$450k');
     await textIs(page, 'liquidity-gap', '$150k');
     if (name === 'chromium' && width === 1440) {
-      for (const checkWidth of [320, 768, 1920]) { await page.setViewportSize({ width: checkWidth, height: 950 }); await noOverflow(page); }
+      for (const checkWidth of [320, 768, 1920]) { await page.setViewportSize({ width: checkWidth, height: 950 }); await noOverflow(page); await brandFits(page); }
       await page.setViewportSize({ width, height: 950 });
       await page.getByLabel('The company sells for', { exact: true }).fill('0');
       await page.getByRole('button', { name: 'After the deal', exact: true }).click();
@@ -148,13 +177,15 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
       await noOverflow(edge); await edge.close();
     }
     await page.goto(`${base}/methodology/`, { waitUntil: 'networkidle' });
+    await renamedMetadata(page, true);
+    assert.equal(await page.locator('.back-link').getAttribute('href'), '/');
     assert.match(await page.locator('h1').innerText(), /Assumptions and calculations/);
     await noOverflow(page);
     await page.goto(`${base}/#s=invalid`, { waitUntil: 'networkidle' });
     await textIs(page, 'founder-net', '$29.4m');
     assert.match(await page.locator('.toast[role="status"]').innerText(), /invalid/);
     assert.deepEqual(errors, []); assert.deepEqual(externalRequests, []); assert.deepEqual(failedResponses, []);
-    reports.push({ browser: name, width, result: 'passed', runtimeErrors: errors, externalRequests, failedResponses });
+    reports.push({ browser: name, width, result: 'passed', brand: 'Beyond Your Valuation', canonicalDomain: 'beyondyourvaluation.com', downloadFilename: 'beyond-your-valuation-scenario.json', runtimeErrors: errors, externalRequests, failedResponses });
     console.log(`${name} ${width}px: interactions, calculations, saved links, download and layout passed`);
   } catch (error) {
     await page.screenshot({ path: `test-results/FAILED-${name}-${width}.png`, fullPage: true });

@@ -84,7 +84,7 @@ export default function Experience() {
   function download() {
     const data = { ...scenario, methodologyVersion: '0.1.0', results: { exit, portfolio, insurance } };
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-    const link = document.createElement('a'); link.href = url; link.download = 'what-you-actually-own-scenario.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const link = document.createElement('a'); link.href = url; link.download = 'beyond-your-valuation-scenario.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     setToast('Scenario and calculation receipts downloaded.');
   }
   function followExit() { updatePortfolio({ capitalCents: exit.founderNetCents }); go('portfolio'); }
@@ -99,7 +99,7 @@ export default function Experience() {
 
   return <>
     <a className="skip" href="#exit">Skip to the simulator</a>
-    <header className="site-header"><a className="brand" href="#top" aria-label="What You Actually Own, home"><Mark /><span>what you<br /><b>actually own.</b></span></a><div className="header-links"><a href="/methodology/">The assumptions <Arrow diagonal /></a><a className="source-link" href={sourceURL} target="_blank" rel="noreferrer" aria-label="View the open-source code on GitHub"><GitIcon /><span>Open source</span></a></div></header>
+    <header className="site-header"><a className="brand" href="#top" aria-label="Beyond Your Valuation, home"><Mark /><span>beyond your<br /><b>valuation.</b></span></a><div className="header-links"><a href="/methodology/">The assumptions <Arrow diagonal /></a><a className="source-link" href={sourceURL} target="_blank" rel="noreferrer" aria-label="View the open-source code on GitHub"><GitIcon /><span>Open source</span></a></div></header>
 
     <main id="top">
       <section className="hero" aria-labelledby="intro-title">

@@ -1,4 +1,4 @@
-# Working on What You Actually Own
+# Working on Beyond Your Valuation
 
 This is a static educational experiment. Keep calculations deterministic and
 browser-local. Preserve explicit assumptions and avoid implying that fictional

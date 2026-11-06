@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = { title: 'Assumptions | What You Actually Own', description: 'The formulas, assumptions and limits of the exit, liquidity and insurance models.' };
+export const metadata: Metadata = {
+  title: 'Assumptions | Beyond Your Valuation',
+  description: 'The formulas, assumptions and limits of the exit, liquidity and insurance models.',
+  alternates: { canonical: '/methodology/' },
+  openGraph: { title: 'Assumptions | Beyond Your Valuation', siteName: 'Beyond Your Valuation', url: '/methodology/', description: 'The formulas, assumptions and limits of the exit, liquidity and insurance models.', type: 'website', images: [{ url: '/og.png', width: 1200, height: 630, alt: 'Beyond Your Valuation: a fictional $100 million exit. How much is actually yours?' }] },
+  twitter: { card: 'summary_large_image', title: 'Assumptions | Beyond Your Valuation', description: 'The formulas, assumptions and limits of the exit, liquidity and insurance models.', images: [{ url: '/og.png', alt: 'Beyond Your Valuation: a fictional $100 million exit. How much is actually yours?' }] },
+};
 
 export default function Methodology() {
   return <main className="methodology">
