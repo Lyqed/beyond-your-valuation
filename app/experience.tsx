@@ -4,13 +4,22 @@ import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type R
 import { calculateExit, type ExitInput } from '@/packages/equity-engine';
 import { assetDefinitions, calculatePortfolio, portfolioPresets, type PortfolioInput } from '@/packages/portfolio-engine';
 import { calculateInsurance, type InsuranceInput } from '@/packages/insurance-engine';
-import { exactMoney, type TraceRow } from '@/packages/shared/money';
+import { allocate, exactMoney, type TraceRow } from '@/packages/shared/money';
 import { decodeScenario, freshScenario, type Scenario } from '@/packages/scenario-schema';
 
 const sourceURL = 'https://github.com/Lyqed/what-you-actually-own';
 const million = 100_000_000;
 const money = (cents: number, digits = 1) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: digits }).format(cents / 100).replace('M', 'm').replace('K', 'k').replace('B', 'bn');
 const pct = (bps: number) => `${bps / 100}%`;
+function Mark() { return <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>; }
+function Tiles({ values, colors, label }: { values: number[]; colors: string[]; label: string }) {
+  const counts = useMemo(() => values.some(Boolean)
+    ? allocate(100, values.map(value => Math.round(value / Math.max(...values) * 10_000)))
+    : values.map(() => 0), [values]);
+  const cells = counts.flatMap((count, group) => Array.from({ length: count }, () => colors[group]));
+  return <div className="tiles" role="img" aria-label={label}>{Array.from({ length: 100 }, (_, index) =>
+    <i key={index} style={{ '--tile': cells[index] || 'var(--line)', '--tile-order': index } as CSSProperties} />)}</div>;
+}
 function Arrow({ diagonal = false }: { diagonal?: boolean }) { return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={diagonal ? 'M5 19 19 5M5 5h14v14' : 'M4 12h15m-6-6 6 6-6 6'} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
 function GitIcon() { return <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.55 9.55 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg>; }
 
@@ -36,6 +45,7 @@ export default function Experience() {
   const [modal, setModal] = useState<'exit' | 'portfolio' | 'insurance' | null>(null);
   const [toast, setToast] = useState('');
   const [active, setActive] = useState('exit');
+  const [boardView, setBoardView] = useState<'ownership' | 'proceeds'>('ownership');
   const dialog = useRef<HTMLDialogElement>(null);
   const exit = useMemo(() => calculateExit(scenario.exit), [scenario.exit]);
   const nonParticipating = useMemo(() => calculateExit({ ...scenario.exit, participation: 'non-participating' }), [scenario.exit]);
@@ -43,6 +53,17 @@ export default function Experience() {
   const portfolio = useMemo(() => calculatePortfolio(scenario.portfolio), [scenario.portfolio]);
   const insurance = useMemo(() => calculateInsurance(scenario.insurance), [scenario.insurance]);
   const e = scenario.exit, p = scenario.portfolio, ins = scenario.insurance;
+  const boardGroups = boardView === 'ownership' ? [
+    { label: 'Founder', value: e.founderBps, color: 'var(--green)', display: pct(e.founderBps) },
+    { label: 'Investors', value: e.investorBps, color: 'var(--lavender)', display: pct(e.investorBps) },
+    { label: 'Team', value: e.teamBps, color: 'var(--peach)', display: pct(e.teamBps) },
+    { label: 'Other', value: exit.otherBps, color: 'var(--pale)', display: pct(exit.otherBps) },
+  ] : [
+    { label: 'Founder cash', value: exit.founderNetCents, color: 'var(--green)', display: money(exit.founderNetCents) },
+    { label: 'Investors', value: exit.investorCents, color: 'var(--lavender)', display: money(exit.investorCents) },
+    { label: 'Other holders', value: exit.teamCents + exit.otherCents, color: 'var(--peach)', display: money(exit.teamCents + exit.otherCents) },
+    { label: 'Costs & tax', value: exit.feesCents + exit.taxCents, color: 'var(--pale)', display: money(exit.feesCents + exit.taxCents) },
+  ];
   function updateExit(change: Partial<ExitInput>) { setScenario(s => ({ ...s, exit: { ...s.exit, ...change } })); }
   function updatePortfolio(change: Partial<PortfolioInput>) { setScenario(s => ({ ...s, portfolio: { ...s.portfolio, ...change } })); }
   function updateInsurance(change: Partial<InsuranceInput>) { setScenario(s => ({ ...s, insurance: { ...s.insurance, ...change } })); }
@@ -67,7 +88,7 @@ export default function Experience() {
     setToast('Scenario and calculation receipts downloaded.');
   }
   function followExit() { updatePortfolio({ capitalCents: exit.founderNetCents }); go('portfolio'); }
-  function reset() { setScenario(freshScenario()); window.history.replaceState(null, '', window.location.pathname); setToast('Back to the original fictional examples.'); }
+  function reset() { setScenario(freshScenario()); setBoardView('ownership'); window.history.replaceState(null, '', window.location.pathname); setToast('Back to the original fictional examples.'); }
   function changeAllocation(index: number, value: number) {
     const next = [...p.allocationsBps], bps = Math.round(value * 100);
     next[0] += next[index] - bps; next[index] = bps; updatePortfolio({ allocationsBps: next });
@@ -78,17 +99,37 @@ export default function Experience() {
 
   return <>
     <a className="skip" href="#exit">Skip to the simulator</a>
-    <header className="site-header"><a className="brand" href="#top" aria-label="What You Actually Own, home">What You Actually Own</a><div className="header-links"><a href="/methodology/">Assumptions</a><a className="source-link" href={sourceURL} target="_blank" rel="noreferrer" aria-label="View the open-source code on GitHub"><GitIcon /><span>GitHub</span></a></div></header>
+    <header className="site-header"><a className="brand" href="#top" aria-label="What You Actually Own, home"><Mark /><span>what you<br /><b>actually own.</b></span></a><div className="header-links"><a href="/methodology/">The assumptions <Arrow diagonal /></a><a className="source-link" href={sourceURL} target="_blank" rel="noreferrer" aria-label="View the open-source code on GitHub"><GitIcon /><span>Open source</span></a></div></header>
 
     <main id="top">
       <section className="hero" aria-labelledby="intro-title">
-        <h1 id="intro-title">What happens to a<br />$100 million exit?</h1>
-        <div className="hero-description"><p>Change the deal terms to see the founder’s net proceeds. Then explore what happens when cash is tied up or an insurance payment arrives late.</p><p className="hero-fine">Three fictional scenarios. You can inspect every calculation.</p></div>
+        <div className="hero-copy">
+          <p className="eyebrow"><span className="live-dot" /> An interactive experiment in money</p>
+          <h1 id="intro-title">You just sold<br />your startup for<br /><span className="hero-amount">${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(e.exitCents / million)}<span> million.</span></span></h1>
+          <p className="hero-question">Congratulations.<br /><em>How much of it is actually yours?</em></p>
+          <button className="button primary" onClick={() => go('exit')}>Find out <Arrow /></button>
+          <p className="hero-fine">A fictional company. Real arithmetic.<br />Change the terms. Inspect every calculation.</p>
+        </div>
+        <div className="hero-art">
+          <div className="board-view" role="group" aria-label="Compare ownership and proceeds">
+            <button aria-pressed={boardView === 'ownership'} onClick={() => setBoardView('ownership')}>Ownership</button>
+            <button aria-pressed={boardView === 'proceeds'} onClick={() => setBoardView('proceeds')}>After the deal</button>
+          </div>
+          <div className="board-top"><span>{boardView === 'ownership' ? 'The company' : 'Where the price goes'}</span><span>{boardView === 'ownership' ? '100% on paper' : `${money(e.exitCents)} to distribute`}</span></div>
+          <div className="board">
+            <Tiles values={boardGroups.map(group => group.value)} colors={boardGroups.map(group => group.color)} label={`${boardView === 'ownership' ? 'Ownership' : 'Exit proceeds'}: ${boardGroups.map(group => `${group.label} ${group.display}`).join(', ')}. Tiles rounded to whole percentages.`} />
+            <div className="board-sticker" aria-live="polite"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong><small>{boardView === 'ownership' ? 'On paper, at least.' : 'After costs and tax.'}</small></div>
+          </div>
+          <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
+          <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
+          <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Owning a piece<br />is only the beginning.</span></div>
+        </div>
       </section>
+      <div className="journey"><p>The terms. The timing. The risk.</p><button className="text-action" onClick={() => go('exit')}>Follow the money <span aria-hidden="true">↓</span></button></div>
       <nav className="chapter-nav" aria-label="Chapters"><div>{[['exit', '1', 'Exit proceeds'], ['portfolio', '2', 'Liquidity'], ['insurance', '3', 'Insurance']].map(([id, number, label]) => <button key={id} className={active === id ? 'selected' : ''} aria-current={active === id ? 'step' : undefined} onClick={() => go(id)}><span>{number}</span>{label}</button>)}</div></nav>
 
       <section className="chapter exit-chapter" id="exit">
-        <ChapterHeading number="1" title="Exit proceeds" subtitle="Adjust the ownership and investor terms. All amounts are in USD." />
+        <ChapterHeading number="01" title={<>A headline.<br /><em>And a very different number.</em></>} subtitle="Adjust the ownership and investor terms. Watch who gets paid. All amounts are in USD." />
         <div className="exit-workspace">
           <div className="deal-controls"><div className="panel-heading"><span>Deal assumptions</span><span className="small-tag">USD</span></div>
             <RangeField label="The company sells for" value={e.exitCents / million} min={0} max={250} display={money(e.exitCents)} onChange={v => updateExit({ exitCents: Math.round(v * million) })} />
@@ -119,7 +160,7 @@ export default function Experience() {
       </section>
 
       <section className="chapter portfolio-chapter" id="portfolio">
-        <ChapterHeading number="2" title="Liquidity" subtitle="Compare assets available within 30 days with obligations due in the same period." />
+        <ChapterHeading number="02" title={<>The day after.<br /><em>Can your money move?</em></>} subtitle="Compare assets available within 30 days with obligations due in the same period." />
         <div className="portfolio-toolbar"><div className="capital-choice" role="group" aria-label="Starting wealth"><button aria-pressed={p.capitalCents === 5 * million} onClick={() => updatePortfolio({ capitalCents: 5 * million })}>The $5m example</button><button aria-pressed={p.capitalCents === exit.founderNetCents && p.capitalCents !== 5 * million} onClick={() => updatePortfolio({ capitalCents: exit.founderNetCents })}>Use founder proceeds: {money(exit.founderNetCents)}</button></div><span className="small-tag">30-day snapshot</span></div>
         <div className="portfolio-workspace"><div className="allocation-panel"><div className="panel-heading"><span>Portfolio allocation</span><strong>{money(p.capitalCents)}</strong></div><div className="preset-buttons" role="group" aria-label="Illustrative portfolios">{Object.entries(portfolioPresets).map(([key, allocations]) => <button key={key} aria-pressed={JSON.stringify(p.allocationsBps) === JSON.stringify(allocations)} onClick={() => updatePortfolio({ allocationsBps: [...allocations] })}>{key === 'paper-rich' ? 'Mostly illiquid' : key === 'room-to-move' ? 'More liquid' : 'Concentrated in a new company'}</button>)}</div><p className="preset-note">Illustrative allocations, not recommended portfolios.</p>
           <div className="asset-list">{portfolio.assets.map((asset, index) => <div className="asset-row" key={asset.id}><span>{asset.label}<small>{index === 0 ? 'Cash today' : asset.liquid ? 'Saleable within 30 days' : 'Tied up beyond 30 days'}</small></span><strong>{pct(p.allocationsBps[index])}</strong><span className="asset-value">{money(asset.valueCents)}</span></div>)}</div>
@@ -131,14 +172,14 @@ export default function Experience() {
       </section>
 
       <section className="chapter insurance-chapter" id="insurance">
-        <ChapterHeading number="3" title="Insurance" subtitle="Adjust a fictional cyber policy to see the insurer’s payment and the loss retained by the business." />
+        <ChapterHeading number="03" title={<>The unexpected.<br /><em>And who pays for it.</em></>} subtitle="Adjust a fictional cyber policy to see the insurer’s payment and the loss retained by the business." />
         <div className="insurance-workspace"><div className="insurance-controls"><div className="panel-heading"><span>Incident and policy assumptions</span></div><RangeField label="Gross incident loss" value={ins.grossLossCents / million} min={0.1} max={5} step={0.1} display={money(ins.grossLossCents)} onChange={v => updateInsurance({ grossLossCents: Math.round(v * million) })} /><RangeField label="Deductible" value={ins.deductibleCents / 100_000} max={500} step={10} display={money(ins.deductibleCents)} onChange={v => updateInsurance({ deductibleCents: Math.round(v * 100_000) })} /><RangeField label="Overall policy limit" value={ins.policyLimitCents / million} min={0} max={5} step={0.1} display={money(ins.policyLimitCents)} onChange={v => updateInsurance({ policyLimitCents: Math.round(v * million) })} /><div className="coverage-toggles"><Toggle title="Business interruption" detail="Lost income, subject to a waiting period and sublimit." checked={ins.interruptionCovered} onChange={() => updateInsurance({ interruptionCovered: !ins.interruptionCovered })} /><Toggle title="Ransom payments" detail="Excluded unless you switch on modeled eligibility." checked={ins.ransomCovered} onChange={() => updateInsurance({ ransomCovered: !ins.ransomCovered })} /></div><details className="advanced"><summary>More policy assumptions <span>+</span></summary><div className="advanced-content"><RangeField label="Interruption sublimit" value={ins.interruptionSublimitCents / 100_000} max={1000} step={25} display={money(ins.interruptionSublimitCents)} onChange={v => updateInsurance({ interruptionSublimitCents: v * 100_000 })} /><RangeField label="Waiting period" value={ins.waitingDays} max={10} display={`${ins.waitingDays} days`} onChange={v => updateInsurance({ waitingDays: v })} hint="The fictional interruption lasts five days. Loss is spread evenly across those days." /><RangeField label="Cash in the business" value={ins.businessCashCents / 100_000} max={2000} step={50} display={money(ins.businessCashCents)} onChange={v => updateInsurance({ businessCashCents: v * 100_000 })} /></div></details></div>
           <div className="coverage-result"><div className="panel-heading"><span>Loss retained by the business</span></div><div className="loss-pair"><div><span>Without the modeled policy</span><strong>{money(ins.grossLossCents)}</strong><small>retained by the business</small></div><div><span>With the modeled policy</span><strong data-testid="retained-loss">{money(insurance.retainedCents)}</strong><small>retained by the business</small></div></div><BreakdownBar total={ins.grossLossCents} label={`Insurer pays ${exactMoney(insurance.insurerCents)}; the business retains ${exactMoney(insurance.retainedCents)}.`} items={[{ label: `Insurer: ${money(insurance.insurerCents)}`, amount: insurance.insurerCents, color: 'var(--neutral-strong)' }, { label: `Business: ${money(insurance.retainedCents)}`, amount: insurance.retainedCents, color: 'var(--accent)' }]} /><div className="coverage-ledger"><div><span>Outside eligible cover</span><strong>{money(insurance.excludedCents)}</strong></div><div><span>Deductible absorbed</span><strong>{money(insurance.deductibleAppliedCents)}</strong></div><div><span>Above the overall limit</span><strong>{money(insurance.limitGapCents)}</strong></div></div><button className="text-action" onClick={() => setModal('insurance')}>Read the calculation <Arrow diagonal /></button></div>
         </div>
         <div className={`timing-panel ${insurance.shortfallCents ? 'has-gap' : ''}`}><div><h3>Payment timing</h3><p>The loss is due within 30 days. Choose when the modeled insurance payment arrives.</p><div className="timing-buttons" role="group" aria-label="Insurance payment timing">{[15, 30, 60, 90].map(days => <button key={days} aria-pressed={ins.paymentDelayDays === days} onClick={() => updateInsurance({ paymentDelayDays: days })}>Day {days}</button>)}</div></div><div className="timing-result"><span>Funding shortfall within 30 days</span><strong data-testid="insurance-gap">{money(insurance.shortfallCents)}</strong><p>{ins.paymentDelayDays > 30 ? `${money(insurance.insurerCents)} of modeled insurance money arrives after the bills are due.` : 'The modeled insurance payment arrives within the 30-day window.'}</p><small>Business cash: {money(ins.businessCashCents)}. This fictional business is separate from the personal portfolio above. Payment timing is an assumption, not a claims forecast.</small></div></div>
       </section>
 
-      <section className="ending"><h2>Keep this scenario</h2><p>Download the current inputs, results and calculation steps.</p><div className="ending-actions"><button className="button primary" onClick={download}>Download the numbers <span aria-hidden="true">↓</span></button></div><div className="ending-links"><a href="/methodology/">Assumptions and calculations</a><a href={sourceURL} target="_blank" rel="noreferrer">Source code on GitHub</a><button onClick={reset}>Start over</button></div></section>
+      <section className="ending"><p className="eyebrow">Take another look at the number.</p><h2>The terms.<br />The timing.<br /><em>What is actually yours?</em></h2><p>Keep the inputs, results and calculation steps.<br />Try a different set of assumptions. See what changes.</p><div className="ending-actions"><button className="button primary" onClick={download}>Download the numbers <span aria-hidden="true">↓</span></button></div><div className="ending-links"><a href="/methodology/">Assumptions and calculations</a><a href={sourceURL} target="_blank" rel="noreferrer">Source code on GitHub</a><button onClick={reset}>Start over</button></div></section>
     </main>
     <footer><a className="footer-brand" href="https://worthbuilding.org/" target="_blank" rel="noreferrer">An experiment worth building. <Arrow diagonal /></a><p>Created by <a href="https://antonbraverman.com/" target="_blank" rel="noreferrer">Anton Braverman</a>. MIT-licensed code.<br />Hypothetical examples. Educational use, not financial, tax, legal or insurance advice.</p><span>Calculated in your browser.<br />No account. No financial data upload.</span></footer>
     {toast && <div className="toast" role="status">{toast}<button aria-label="Dismiss message" onClick={() => setToast('')}>×</button></div>}

@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="What You Actually Own">
-  <rect width="64" height="64" fill="#fff"/>
-  <path d="m9 16 10 32h6l7-23 7 23h6l10-32h-7L42 39l-7-23h-6l-7 23-6-23Z" fill="#2359b5"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#d9f99a"/><path d="M13 13h16v16H13zm22 0h16v16H35zM13 35h16v16H13z" fill="#174b3a"/><path d="M35 35h16v16H35z" fill="#9c8ce8"/></svg>

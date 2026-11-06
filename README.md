@@ -4,7 +4,7 @@ Explore how ownership, deal terms and payment timing affect available cash.
 
 An interactive, open-source model of startup exits, liquidity and insurance. Start with a fictional $100 million sale and change the assumptions to see the results. No account or financial-data upload is needed. Calculations run in your browser.
 
-[Open the experience](https://what-you-actually-own.motbot146.chatgpt.site) · [Read the assumptions](https://what-you-actually-own.motbot146.chatgpt.site/methodology/)
+[Open the experience](https://whatyouactuallyown.com) · [Read the assumptions](https://whatyouactuallyown.com/methodology/)
 
 ![What You Actually Own: fictional exit, liquidity and insurance scenarios](public/og.png)
 
@@ -17,6 +17,11 @@ An interactive, open-source model of startup exits, liquidity and insurance. Sta
 | Insurance | Deductible, limits, exclusions, waiting period and payment timing | Insurer payment, retained incident loss and temporary cash gap |
 
 Click a result to see the calculation, or download its inputs, exact outputs and calculation receipts as JSON. Existing scenario links continue to load their saved inputs.
+
+The opening ownership board follows the current deal inputs. Switch between
+ownership and proceeds to compare the shares on paper with the modeled
+distribution of the sale price. Its 100 tiles round to whole percentages;
+the calculation receipts retain exact cents.
 
 The default exit produces $29.4 million of founder net cash. Changing only the investor's preference from non-participating to uncapped participating produces $20.4 million. These are outputs of the stated fictional terms, not estimates of a real founder's proceeds.
 

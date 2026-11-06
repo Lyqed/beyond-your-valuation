@@ -14,7 +14,7 @@ async function noOverflow(page) {
   assert(widths.document <= widths.viewport, `Horizontal overflow: ${JSON.stringify(widths)}`);
 }
 
-for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', chromium, 390], ['webkit', webkit, 390]]) {
+for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', chromium, 390], ['webkit', webkit, 1440], ['webkit', webkit, 390]]) {
   const browser = await engine.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width, height: 950 }, reducedMotion: 'reduce' });
   const errors = [], externalRequests = [], failedResponses = [];
@@ -31,6 +31,13 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await textIs(page, 'founder-net', '$29.4m');
     await textIs(page, 'retained-loss', '$400k');
     await textIs(page, 'insurance-gap', '$450k');
+    await textIs(page, 'board-value', '40%');
+    assert.equal(await page.locator('.hero .tiles > i').count(), 100);
+    await page.getByRole('button', { name: 'After the deal', exact: true }).click();
+    await textIs(page, 'board-value', '$29.4m');
+    assert.match(await page.locator('.hero .tiles').getAttribute('aria-label'), /Founder cash \$29\.4m/);
+    await page.screenshot({ path: `test-results/${name}-${width}-proceeds-board.png` });
+    await page.getByRole('button', { name: 'Ownership', exact: true }).click();
     await noOverflow(page);
     await page.screenshot({ path: `test-results/${name}-${width}-hero.png` });
 
@@ -39,6 +46,14 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.screenshot({ path: `test-results/${name}-${width}-deal.png` });
     await page.getByRole('button', { name: /^Participating/ }).click();
     await textIs(page, 'founder-net', '$20.4m');
+    await page.getByRole('button', { name: 'After the deal', exact: true }).click();
+    await textIs(page, 'board-value', '$20.4m');
+    await page.getByLabel('Founder ownership', { exact: true }).fill('35');
+    await page.getByRole('button', { name: 'Ownership', exact: true }).click();
+    await textIs(page, 'board-value', '35%');
+    assert.match(await page.locator('.hero .tiles').getAttribute('aria-label'), /Founder 35%/);
+    await page.getByLabel('Founder ownership', { exact: true }).fill('40');
+    await textIs(page, 'board-value', '40%');
     await page.getByRole('button', { name: '2× their investment', exact: true }).click();
     await textIs(page, 'founder-net', '$11.4m');
     await page.getByRole('button', { name: /^Non-participating/ }).click();
@@ -114,6 +129,13 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     if (name === 'chromium' && width === 1440) {
       for (const checkWidth of [320, 768, 1920]) { await page.setViewportSize({ width: checkWidth, height: 950 }); await noOverflow(page); }
       await page.setViewportSize({ width, height: 950 });
+      await page.getByLabel('The company sells for', { exact: true }).fill('0');
+      await page.getByRole('button', { name: 'After the deal', exact: true }).click();
+      await textIs(page, 'board-value', '$0');
+      assert.equal(await page.locator('.hero .tiles > i').count(), 100);
+      await noOverflow(page);
+      await page.getByLabel('The company sells for', { exact: true }).fill('100');
+      await textIs(page, 'board-value', '$29.4m');
       const zero = { ...shared, exit: { ...shared.exit, founderBps: 10_000, teamBps: 0, investorBps: 0, investmentCents: 0 } };
       const edge = await context.newPage(); attach(edge);
       await edge.goto(`${base}/#s=${encodeURIComponent(JSON.stringify(zero))}`, { waitUntil: 'networkidle' });
