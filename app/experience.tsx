@@ -7,7 +7,7 @@ import { calculateInsurance, type InsuranceInput } from '@/packages/insurance-en
 import { allocate, exactMoney, type TraceRow } from '@/packages/shared/money';
 import { decodeScenario, freshScenario, type Scenario } from '@/packages/scenario-schema';
 
-const sourceURL = 'https://github.com/Lyqed/what-you-actually-own';
+const sourceURL = 'https://github.com/Lyqed/beyond-your-valuation';
 const million = 100_000_000;
 const money = (cents: number, digits = 1) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: digits }).format(cents / 100).replace('M', 'm').replace('K', 'k').replace('B', 'bn');
 const pct = (bps: number) => `${bps / 100}%`;

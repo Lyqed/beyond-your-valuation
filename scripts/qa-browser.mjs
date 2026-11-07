@@ -55,7 +55,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await brandFits(page);
     assert.equal(await page.locator('.brand').getAttribute('href'), '#top');
     assert.equal(await page.locator('.header-links a').first().getAttribute('href'), '/methodology/');
-    assert.equal(await page.locator('.source-link').getAttribute('href'), 'https://github.com/Lyqed/what-you-actually-own');
+    assert.equal(await page.locator('.source-link').getAttribute('href'), 'https://github.com/Lyqed/beyond-your-valuation');
     await textIs(page, 'founder-net', '$29.4m');
     await textIs(page, 'retained-loss', '$400k');
     await textIs(page, 'insurance-gap', '$450k');
