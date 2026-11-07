@@ -160,7 +160,6 @@ export default function Experience() {
           <h1 id="intro-title" tabIndex={-1}>You just sold<br />your startup for<br /><span className="hero-amount">${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(e.exitCents / million)}<span> million.</span></span></h1>
           <p className="hero-question">Congratulations.<br /><em>How much of it is actually yours?</em></p>
           <button className="button primary" onClick={() => go('exit')}>Find out <Arrow /></button>
-          <p className="hero-fine">A fictional company. Real arithmetic.<br />Change the terms. Inspect every calculation.</p>
         </div>
         <div className="hero-art">
           <div className="board-view" role="group" aria-label="Compare ownership and proceeds">
@@ -171,15 +170,15 @@ export default function Experience() {
             <div className="board-top"><span>{boardView === 'ownership' ? 'The company' : 'Where the price goes'}</span><span>{boardView === 'ownership' ? '100% on paper' : `${money(e.exitCents)} to distribute`}</span></div>
             <Tiles values={boardGroups.map(group => group.value)} colors={boardGroups.map(group => group.color)} label={`${boardView === 'ownership' ? 'Ownership' : 'Exit proceeds'}: ${boardGroups.map(group => `${group.label} ${group.display}`).join(', ')}. Tiles rounded to whole percentages.`} />
             <div className="board-sticker"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong><small>{boardView === 'ownership' ? 'Share of the company.' : 'After costs and tax.'}</small></div>
-          </div></div>
+          </div>
           <div className="board-details">
             <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
             <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
             <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Compare ownership<br />with cash after the deal.</span></div>
           </div>
+          </div>
         </div>
       </section>
-      <div className="journey"><p>A sale. A portfolio. An insurance policy.</p><button className="text-action" onClick={() => go('exit')}>Start with the sale <span aria-hidden="true">↓</span></button></div>
       <nav className="chapter-nav" aria-label="Chapters"><div>{[['exit', '1', 'Exit proceeds'], ['portfolio', '2', 'Liquidity'], ['insurance', '3', 'Insurance']].map(([id, number, label]) => <button key={id} className={active === id ? 'selected' : ''} aria-current={active === id ? 'step' : undefined} onClick={() => go(id)}><span>{number}</span>{label}</button>)}</div></nav>
 
       <section className="chapter exit-chapter" id="exit" aria-labelledby="chapter-title-01">
