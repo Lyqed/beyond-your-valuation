@@ -167,11 +167,11 @@ export default function Experience() {
             <button aria-pressed={boardView === 'ownership'} onClick={() => setBoardView('ownership')}>Ownership</button>
             <button aria-pressed={boardView === 'proceeds'} onClick={() => setBoardView('proceeds')}>After the deal</button>
           </div>
-          <div className="board-top"><span>{boardView === 'ownership' ? 'The company' : 'Where the price goes'}</span><span>{boardView === 'ownership' ? '100% on paper' : `${money(e.exitCents)} to distribute`}</span></div>
-          <div className="board">
+          <div className="board-frame"><div className="board">
+            <div className="board-top"><span>{boardView === 'ownership' ? 'The company' : 'Where the price goes'}</span><span>{boardView === 'ownership' ? '100% on paper' : `${money(e.exitCents)} to distribute`}</span></div>
             <Tiles values={boardGroups.map(group => group.value)} colors={boardGroups.map(group => group.color)} label={`${boardView === 'ownership' ? 'Ownership' : 'Exit proceeds'}: ${boardGroups.map(group => `${group.label} ${group.display}`).join(', ')}. Tiles rounded to whole percentages.`} />
             <div className="board-sticker"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong><small>{boardView === 'ownership' ? 'Share of the company.' : 'After costs and tax.'}</small></div>
-          </div>
+          </div></div>
           <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
           <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
           <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Compare ownership<br />with cash after the deal.</span></div>

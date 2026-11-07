@@ -75,7 +75,10 @@ em{font-family:inherit;font-style:normal;font-weight:inherit;letter-spacing:inhe
 .outline{border:1px solid var(--ink);background:transparent}
 .hero-fine{margin-top:12px;font-size:10px;color:var(--muted)}
 .hero-art{padding:13px 26px 0 16px;position:relative}
-.board-top{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.13em;margin:0 10px 26px;color:var(--muted)}
+.board-frame{padding-top:42px}
+.board-top{position:absolute;left:0;right:0;bottom:calc(100% + 12px);display:flex;justify-content:space-between;gap:12px;font-size:9px;letter-spacing:.13em;margin:0;color:var(--muted)}
+.board-top span{white-space:nowrap}
+.board-top span:last-child{text-align:right}
 .board{position:relative;padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--white);transform:rotate(-7deg);box-shadow:0 20px 40px -25px #17171730,4px 5px 0 #e5e5e5,6px 8px 0 var(--line)}
 .tiles{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;aspect-ratio:1}
 .tiles i{background:var(--tile);border-radius:2px;display:block;box-shadow:0 2px 0 color-mix(in srgb,var(--tile),#000 15%);transition:background .4s}
@@ -379,7 +382,7 @@ footer>span{text-align:left;grid-column:2}
 .button{min-height:52px;font-size:12px;padding:13px 20px;gap:24px}
 .hero-fine{font-size:9px}
 .hero-art{max-width:410px;width:84%;margin:0 auto;padding:0 0 0 0}
-.board-top{font-size:7px;margin-bottom:20px}
+.board-top{font-size:7px}
 .board-sticker{min-width:110px;right:-22px;bottom:20px;padding:13px 15px}
 .board-sticker strong{font-size:43px}
 .board-sticker small{font-size:11px}
@@ -669,7 +672,8 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .hero-art { width: 84%; max-width: 400px; padding: 0; }
   .board-view { width: max-content; margin-bottom: 22px; }
   .board-view button { min-height: 44px; padding-inline: 12px; font-size: 12px; }
-  .board-top { font-size: 9px; margin-inline: 0; }
+  .board-frame { padding-top: 34.4px; }
+  .board-top { font-size: 9px; }
   .board-sticker { min-width: 118px; right: -20px; padding: 11px 12px; }
   .board-sticker > span { font-size: 9px; }
   .board-sticker strong { font-size: 34px; }
