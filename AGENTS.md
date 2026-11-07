@@ -13,6 +13,16 @@ Run `npm test`, `npm run build` and `npm run typecheck` after model or app chang
 Use `scripts/qa-browser.mjs` when changing interactive behavior. Do not publish
 internal employer details. Site copy uses plain language and no em dashes.
 
+## Current visual direction
+
+Use the locally bundled Inter throughout, with a white canvas and near-black
+text. Green marks founder proceeds, available funds and primary actions; blue,
+orange and gray distinguish ownership groups. Rust marks cash gaps and retained
+loss. Keep labels alongside color, readable contrast and the tilted ownership
+board. Do not restore the earlier cream canvas or decorative Georgia italics.
+Lead each chapter with a concrete question and explain financial terms where
+they first matter. See `docs/EDITORIAL-DESIGN-2026-11-07.md` for this review.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

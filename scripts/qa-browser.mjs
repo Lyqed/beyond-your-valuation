@@ -43,7 +43,7 @@ async function renamedMetadata(page, methodology = false) {
   assert.equal(await page.locator('meta[name="twitter:title"]').getAttribute('content'), title);
   assert.equal(await page.locator('meta[property="og:site_name"]').getAttribute('content'), 'Beyond Your Valuation');
   for (const selector of ['meta[property="og:image"]', 'meta[name="twitter:image"]']) {
-    assert.equal(await page.locator(selector).getAttribute('content'), 'https://beyondyourvaluation.com/og.png');
+    assert.equal(await page.locator(selector).getAttribute('content'), 'https://beyondyourvaluation.com/og.png?v=20261107-native');
   }
 }
 async function brandFits(page) {
@@ -172,6 +172,8 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.getByRole('button', { name: /Ransom payments/ }).click();
     await page.getByLabel('Overall policy limit', { exact: true }).fill('0');
     await textIs(page, 'retained-loss', '$1.2m');
+    assert.equal(await page.locator('.timing-result > p').innerText(), 'There is no insurance payment under these assumptions.');
+    assert.match(await page.locator('.ending-recap').innerText(), /No insurance payment/);
     await textIs(page, 'insurance-gap', '$450k');
     await page.getByLabel('Overall policy limit', { exact: true }).fill('1');
     await textIs(page, 'insurance-gap', '$0');
