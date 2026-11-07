@@ -74,6 +74,7 @@ The optional browser check uses an existing Playwright installation with Chromiu
 
 ```sh
 PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs node scripts/qa-browser.mjs
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs node scripts/qa-saved-inputs.mjs
 ```
 
 Set `BASE_URL` to test another locally served build. Screenshots and the QA report go to ignored `test-results/`.
@@ -86,6 +87,6 @@ See [the model definitions](docs/methodology.md), [limitations](docs/limitations
 
 ## Privacy and licensing
 
-There are no application analytics, accounts or financial-data uploads. Hosts receive ordinary HTTP requests. Browsers do not send URL fragments to the hosting server, but anyone receiving a shared link can read its inputs. Downloads are generated locally.
+There are no application analytics, accounts or financial-data uploads. Hosts receive ordinary HTTP requests. Browsers do not send URL fragments to the hosting server, but anyone receiving a shared link can read its inputs. Downloads are generated locally. Inputs are retained in the current browser tab’s session so returning from the assumptions page preserves edits; Start over clears them. Existing scenario links take precedence over the saved tab state.
 
 Created by Anton Braverman as an experiment worth building. Code is [MIT licensed](LICENSE). The locally bundled Inter font is covered by its [SIL Open Font License](public/fonts/OFL.txt). No employer, financial institution or cited organization is a partner or endorser.

@@ -244,7 +244,7 @@ em{font-family:var(--serif);font-weight:400;letter-spacing:-.045em}
 .timing-result{border-left:1px solid #cfc2df;padding:8px 0 8px 38px;display:flex;flex-direction:column;justify-content:center}
 .timing-result>span{font-size:9px;letter-spacing:.1em;color:#6c5e7b}
 .timing-result>strong{font-size:60px;letter-spacing:-.065em;line-height:1.4;font-weight:550;color:#624d7a}
-.timing-result small{display:block;font-size:9px;line-height:1.8;color:#786b84;margin-top:17px}
+.timing-result small{display:block;font-size:9px;line-height:1.8;color:#665c70;margin-top:17px}
 
 .ending{padding:115px 30px 100px;text-align:center;max-width:1100px;margin:auto}
 .ending>.eyebrow{color:var(--muted)}
@@ -740,4 +740,140 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .board-view button[aria-pressed="true"] { outline: 2px solid Highlight; outline-offset: -3px; }
   .chapter-nav button.selected::after { background: Highlight; }
   .big-payout { color: LinkText; }
+}
+
+/* Keep changing outcomes close to the controls on narrow screens. */
+.chapter-feedback { display: none; }
+.chapter-feedback[data-active="false"] { visibility: hidden; pointer-events: none; }
+.experiment-prompt {
+  margin: -22px 0 28px 47px;
+  max-width: 650px;
+  color: var(--green);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.term-explainer {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.75;
+}
+.incident-breakdown {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 28px 47px;
+  max-width: 650px;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.incident-breakdown > li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 16px;
+}
+.incident-breakdown strong {
+  flex: none;
+  min-width: 68px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chapter-bridge-actions { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; }
+.insurance-chapter > .timing-panel { margin-top: 24px; margin-bottom: 36px; }
+.ending-recap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 30px 0;
+  text-align: left;
+}
+.ending-recap > div { padding-top: 18px; border-top: 1px solid var(--line); min-width: 0; }
+.ending-recap dt { font-size: 13px; line-height: 1.6; }
+.ending-recap dd {
+  margin: 7px 0;
+  color: var(--green);
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 550;
+  letter-spacing: -.035em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.ending-recap small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1050px) and (min-width: 741px) {
+  .experiment-prompt { margin-left: 40px; }
+}
+
+@media (max-width: 740px) {
+  .chapter-feedback {
+    position: sticky;
+    top: 62px;
+    z-index: 9;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+    margin: 0 0 24px;
+    padding: 10px 14px;
+    border: 1px solid #c7d1bf;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--green);
+    box-shadow: 0 3px 8px #20241f0d;
+  }
+  .chapter-feedback > span {
+    grid-column: 1;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .chapter-feedback > strong {
+    grid-column: 1;
+    font-size: 25px;
+    line-height: 1.2;
+    font-weight: 550;
+    letter-spacing: -.035em;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .chapter-feedback > .text-action {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    min-height: 44px;
+    max-width: 108px;
+    padding: 4px 0;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .experiment-prompt { margin: -12px 0 24px 29px; font-size: 13px; }
+  .incident-breakdown { margin-left: 29px; font-size: 13px; }
+  .ending-recap { grid-template-columns: 1fr; gap: 18px; }
+  #exit-outcome, #portfolio-outcome, #insurance-outcome { scroll-margin-top: 100px; }
+}
+
+@media (forced-colors: active) {
+  .chapter-feedback { border-color: CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
 }
