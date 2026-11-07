@@ -87,11 +87,12 @@ em{font-family:inherit;font-style:normal;font-weight:inherit;letter-spacing:inhe
 .board-sticker strong{display:block;font-size:54px;font-weight:550;line-height:1.2;letter-spacing:-.06em}
 .board-sticker strong>span{font-size:30px}
 .board-sticker small{font:400 13px var(--sans)}
+.board-details{display:flow-root;transform:rotate(-7deg);transform-origin:50% 0}
 .board-caption{display:flex;justify-content:center;gap:23px;margin-top:37px;font-size:8px;letter-spacing:.07em}
 .board-caption i{display:inline-block;width:7px;height:7px;background:var(--green);margin-right:5px}
 .board-caption span:nth-child(2) i{background:var(--lavender)}
 .board-caption span:nth-child(3) i{background:var(--peach)}
-.art-footnote{display:flex;gap:9px;justify-content:center;font:400 16px/1.35 var(--sans);margin:21px 0 0 50px;transform:rotate(-4deg);color:var(--muted)}
+.art-footnote{display:flex;gap:9px;justify-content:center;font:400 16px/1.35 var(--sans);margin:21px 0 0 50px;color:var(--muted)}
 .drawn-arrow{font:30px var(--sans);line-height:.7}
 
 .journey{max-width:1248px;margin:auto;padding:20px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:center}

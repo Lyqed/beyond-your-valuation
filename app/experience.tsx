@@ -172,9 +172,11 @@ export default function Experience() {
             <Tiles values={boardGroups.map(group => group.value)} colors={boardGroups.map(group => group.color)} label={`${boardView === 'ownership' ? 'Ownership' : 'Exit proceeds'}: ${boardGroups.map(group => `${group.label} ${group.display}`).join(', ')}. Tiles rounded to whole percentages.`} />
             <div className="board-sticker"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong><small>{boardView === 'ownership' ? 'Share of the company.' : 'After costs and tax.'}</small></div>
           </div></div>
-          <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
-          <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
-          <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Compare ownership<br />with cash after the deal.</span></div>
+          <div className="board-details">
+            <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
+            <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
+            <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Compare ownership<br />with cash after the deal.</span></div>
+          </div>
         </div>
       </section>
       <div className="journey"><p>A sale. A portfolio. An insurance policy.</p><button className="text-action" onClick={() => go('exit')}>Start with the sale <span aria-hidden="true">↓</span></button></div>
