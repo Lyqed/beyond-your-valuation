@@ -654,6 +654,7 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .header-links { gap: 12px; }
   .header-links > a:first-child { font-size: 12px; }
   .hero { min-height: auto; gap: 32px; padding-block: 20px 38px; }
+  .hero-copy { text-align: center; }
   .hero h1 { margin-block: 18px 20px; font-size: clamp(40px, 10.5vw, 65px); }
   .hero-amount { font-size: clamp(64px, 16.5vw, 108px); }
   .hero .eyebrow { display: none; }
@@ -669,7 +670,7 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .board-sticker strong { font-size: 34px; }
   .board-sticker small { font-size: 12px; }
   .board-details { transform: none; }
-  .board-caption { margin-top: 28px; font-size: 12px; gap: 6px 12px; transform: rotate(-7deg); transform-origin: 50% calc(-50cqw - 28px); }
+  .board-caption { margin-top: 28px; font-size: 12px; gap: 6px 12px; transform: rotate(-7deg); transform-origin: 50% 50%; }
   .board-note { font-size: 12px; margin-top: 32px; }
   .art-footnote { font-size: 15px; }
   .chapter-nav { overflow: visible; padding-inline: 20px; }
