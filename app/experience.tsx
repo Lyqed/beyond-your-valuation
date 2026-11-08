@@ -156,7 +156,6 @@ export default function Experience() {
     <main id="top">
       <section className="hero" aria-labelledby="intro-title">
         <div className="hero-copy">
-          <p className="eyebrow"><span className="live-dot" /> A fictional startup sale</p>
           <h1 id="intro-title" tabIndex={-1}>You just sold<br />your startup for<br /><span className="hero-amount">${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(e.exitCents / million)}<span> million.</span></span></h1>
           <p className="hero-question">Congratulations.<br /><em>How much of it is actually yours?</em></p>
           <button className="button primary" onClick={() => go('exit')}>Find out <Arrow /></button>

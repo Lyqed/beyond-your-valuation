@@ -62,8 +62,7 @@ em{font-family:inherit;font-style:normal;font-weight:inherit;letter-spacing:inhe
 
 .hero{max-width:1248px;margin:0 auto;padding:56px 0 80px;display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center;min-height:710px}
 .eyebrow{font-size:10px;font-weight:650;letter-spacing:.13em;line-height:1.5}
-.live-dot{width:6px;height:6px;background:var(--green);display:inline-block;border-radius:50%;margin:0 7px 1px 0}
-.hero h1{font-size:clamp(49px,5.6vw,78px);line-height:1.08;letter-spacing:-.063em;margin:25px 0 28px}
+.hero h1{font-size:clamp(49px,5.6vw,78px);line-height:1.08;letter-spacing:-.063em;margin:0 0 28px}
 .hero-amount{color:var(--ink);white-space:nowrap;display:block;font-size:clamp(65px,8.3vw,116px);line-height:1.18;letter-spacing:-.075em}
 .hero-amount>span{font-family:inherit;font-weight:600;font-size:.49em;letter-spacing:-.06em}
 .hero-question{font-size:19px;line-height:1.55;margin-bottom:26px}
@@ -373,7 +372,6 @@ footer>span{text-align:left;grid-column:2}
 .hero h1{font-size:clamp(43px,10.5vw,70px);margin:24px 0;line-height:1.07}
 .hero-amount{font-size:clamp(67px,16vw,110px);margin-top:5px}
 .hero-amount>span{font-size:.47em}
-.hero .eyebrow{font-size:8px;letter-spacing:.12em}
 .hero-question{font-size:16px;line-height:1.5;margin-bottom:24px}
 .hero-question em{font-size:19px}
 .button{min-height:52px;font-size:12px;padding:13px 20px;gap:24px}
@@ -655,9 +653,8 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .header-links > a:first-child { font-size: 12px; }
   .hero { min-height: auto; gap: 32px; padding-block: 20px 38px; }
   .hero-copy { text-align: center; }
-  .hero h1 { margin-block: 18px 20px; font-size: clamp(40px, 10.5vw, 65px); }
+  .hero h1 { margin-block: 0 20px; font-size: clamp(40px, 10.5vw, 65px); }
   .hero-amount { font-size: clamp(64px, 16.5vw, 108px); }
-  .hero .eyebrow { display: none; }
   .hero-question { margin-bottom: 20px; }
   .hero-art { width: 84%; max-width: 400px; padding: 0; }
   .board-view { display: grid; grid-template-columns: 1fr 1fr; width: 244px; margin-bottom: 22px; background: #f7f5ef; }
