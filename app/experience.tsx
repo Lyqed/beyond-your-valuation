@@ -171,7 +171,7 @@ export default function Experience() {
             <div className="board-sticker"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong><small>{boardView === 'ownership' ? 'Share of the company.' : 'After costs and tax.'}</small></div>
           </div>
           <div className="board-details">
-            <div className="board-caption">{boardGroups.map(group => <span key={group.label}><i style={{ background: group.color }} />{group.label} <b>{group.display}</b></span>)}</div>
+            <div className="board-caption" data-view={boardView}>{boardGroups.map(group => <span key={group.label}><span className="board-caption-label"><i style={{ background: group.color }} />{group.label}</span><b>{group.display}</b></span>)}</div>
             <p className="board-note">Each tile is about 1%. Exact amounts are in the calculation.</p>
             <div className="art-footnote"><span className="drawn-arrow" aria-hidden="true">↳</span><span>Compare ownership<br />with cash after the deal.</span></div>
           </div>

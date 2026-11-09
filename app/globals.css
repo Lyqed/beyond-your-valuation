@@ -567,7 +567,7 @@ output, .big-payout, .receipt-lines strong, .comparison-bars strong,
 .board-sticker strong > span { font-size: .6em; }
 .board-sticker small { display: block; font-size: 13px; line-height: 1.4; }
 .board-caption { flex-wrap: wrap; gap: 8px 16px; font-size: 12px; letter-spacing: 0; line-height: 1.5; }
-.board-caption span { display: inline-flex; align-items: center; }
+.board-caption > span, .board-caption-label { display: inline-flex; align-items: center; }
 .board-caption b { margin-left: 4px; font-weight: 550; }
 .board-caption i { flex: none; width: 8px; height: 8px; }
 .board-note { max-width: 390px; margin: 12px auto 0; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
@@ -668,6 +668,10 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .board-sticker small { font-size: 12px; }
   .board-details { transform: none; }
   .board-caption { margin-top: 28px; font-size: 12px; gap: 6px 12px; transform: rotate(-7deg); transform-origin: 50% 50%; }
+  .board-caption[data-view="proceeds"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+  .board-caption[data-view="proceeds"] > span { flex-direction: column; gap: 3px; min-width: 0; }
+  .board-caption[data-view="proceeds"] b { margin-left: 0; }
+  .board-caption-label { white-space: nowrap; }
   .board-note { font-size: 12px; margin-top: 32px; }
   .art-footnote { font-size: 15px; }
   .chapter-nav { overflow: visible; padding-inline: 20px; }
