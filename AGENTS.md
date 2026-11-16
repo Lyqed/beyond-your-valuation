@@ -13,6 +13,9 @@ Run `npm test`, `npm run build` and `npm run typecheck` after model or app chang
 Use `scripts/qa-browser.mjs` when changing interactive behavior. Do not publish
 internal employer details. Site copy uses plain language and no em dashes.
 
+Commit messages carry no AI attribution: no `Co-Authored-By` line for an
+assistant and no "generated with" line. Anton is the author.
+
 ## Current visual direction
 
 Use the locally bundled Inter throughout, with a white canvas and near-black
