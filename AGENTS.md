@@ -23,6 +23,19 @@ board. Do not restore the earlier cream canvas or decorative Georgia italics.
 Lead each chapter with a concrete question and explain financial terms where
 they first matter. See `docs/EDITORIAL-DESIGN-2026-11-07.md` for this review.
 
+## Publishing
+
+Since 16 November 2026 the site is published through Vercel, not through
+Sites: project `beyond-your-valuation`, a static deployment of `out/` plus
+`vercel.json`, with `beyondyourvaluation.com` resolving to it. Read
+`docs/VERCEL-2026-11-16.md` first. Commit, then build, then deploy. The Worth
+Building repository keeps a guarded helper and the release records in
+`lab/releases/2026-11-16-beyond-vercel/`. `.openai/hosting.json` describes the
+earlier Sites project, which no longer receives the domain's traffic.
+
+The board's two views must not move the page. Both captions share one grid
+cell for that reason, and `scripts/qa-hero-shift.mjs` measures it.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
