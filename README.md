@@ -4,7 +4,7 @@ Explore how ownership, deal terms and payment timing affect available cash.
 
 An interactive, open-source model of startup exits, liquidity and insurance. Start with a fictional $100 million sale and change the assumptions to see the results. No account or financial-data upload is needed. Calculations run in your browser.
 
-[Open the experience](https://beyond-your-valuation.motbot146.chatgpt.site/) · [Read the assumptions](https://beyond-your-valuation.motbot146.chatgpt.site/methodology/)
+[Open the experience](https://beyondyourvaluation.com/) · [Read the assumptions](https://beyondyourvaluation.com/methodology/)
 
 ![Beyond Your Valuation: fictional exit, liquidity and insurance scenarios](public/og.png)
 
@@ -42,7 +42,7 @@ npm run build
 npm run typecheck
 ```
 
-The build exports static files to `out/`. Any host that serves the directory with trailing-slash routes can serve this application. There is no runtime server or database. `.openai/hosting.json` identifies the original Sites deployment; replace its project identity when deploying your own copy through Sites.
+The build exports static files to `out/`. Any host that serves the directory with trailing-slash routes can serve this application. There is no runtime server or database. `vercel.json` holds the headers and routing used when the export is published through Vercel; see `docs/VERCEL-2026-11-16.md`. `.openai/hosting.json` identifies the original Sites deployment; replace its project identity when deploying your own copy through Sites.
 
 ## Architecture
 
