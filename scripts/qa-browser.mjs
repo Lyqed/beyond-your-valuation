@@ -112,7 +112,7 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.getByRole('button', { name: /^Non-participating/ }).click();
     await textIs(page, 'founder-net', '$19m');
     await page.getByRole('button', { name: '1× their investment', exact: true }).click();
-    await page.getByRole('button', { name: 'Show every step', exact: true }).click();
+    await page.locator('#exit').getByRole('button', { name: 'Show the calculation', exact: true }).click();
     await page.locator('dialog[open]').waitFor();
     assert.match(await page.locator('dialog').innerText(), /29,400,000\.00/);
     await noOverflow(page);
@@ -136,10 +136,10 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await page.getByRole('button', { name: 'Explore the $5m example', exact: true }).click();
     await focusMovesInto(page, 'portfolio');
     assert.match(await page.locator('#portfolio h2').innerText(), /\$5m/);
-    assert.match(await page.locator('.fx-explanation').innerText(), /₪3\.60.*₪18m/);
+    assert.match(await page.locator('.fx-explanation').innerText(), /₪18m at ₪3\.60/);
     const dollarAssets = await page.locator('.asset-list').innerText();
     await page.getByRole('button', { name: /The dollar weakens/ }).click();
-    assert.match(await page.locator('.fx-explanation').innerText(), /₪2\.88.*₪14\.4m/);
+    assert.match(await page.locator('.fx-explanation').innerText(), /₪14\.4m at ₪2\.88/);
     assert.equal(await page.locator('.asset-list').innerText(), dollarAssets, 'FX alone changed dollar asset values');
     await announcementIncludes(page, '14,400,000.00');
     await page.getByRole('button', { name: 'Apply all events', exact: true }).click();

@@ -885,3 +885,50 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
 @media (forced-colors: active) {
   .chapter-feedback, .chapter-feedback[data-negative="true"] { border-color: CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
 }
+
+/* Tighter rhythm, 16 November 2026: less between a question, its controls and its answer. */
+.chapter { padding-top: 72px; }
+.chapter-heading { display: block; margin-bottom: 14px; }
+.experiment-prompt { margin: 0 0 26px; font-size: 15px; }
+.incident-breakdown { margin: 4px 0 14px; }
+.segmented button { min-height: 44px; font-size: 15px; }
+.big-payout { margin: 0 0 14px; }
+.decision-note { border-top: 0; padding-top: 0; margin: 0 0 22px; }
+.receipt-lines { margin-bottom: 22px; }
+.bar-legend { margin-bottom: 18px; }
+.comparison { padding: 40px 45px 36px; gap: 64px; }
+.comparison h3 { margin-top: 0; }
+.chapter-bridge { padding: 22px 0; }
+.portfolio-toolbar { margin-bottom: 18px; }
+.portfolio-source-note { margin: -8px 0 18px; }
+.asset-list { margin-top: 16px; }
+.asset-row { padding: 10px 0; }
+.event-toggle { min-height: 66px; padding-block: 12px; }
+.liquidity-result { margin-top: 28px; }
+.under-result { margin: 10px 0 36px; }
+.timing-panel h3 { font-size: 30px; margin: 0 0 18px; }
+.timing-buttons { margin-top: 0; }
+.loss-pair { margin: 22px 0 26px; }
+.ending { padding: 88px 30px 72px; }
+.ending h2 { margin: 0 0 30px; }
+.ending-recap { margin: 0 0 22px; }
+.ending-links { margin-top: 0; gap: 8px 25px; }
+.ending-links button:first-child { font-weight: 600; }
+.dialog-top { justify-content: flex-end; margin-bottom: 4px; }
+
+@media (max-width: 1050px) and (min-width: 741px) {
+  .experiment-prompt { margin-left: 0; }
+}
+
+@media (max-width: 740px) {
+  .chapter { padding-top: 40px; }
+  .chapter-heading { margin-bottom: 12px; }
+  .experiment-prompt { margin: 0 0 20px; font-size: 14px; }
+  .incident-breakdown { margin-left: 0; }
+  .board-note { margin-top: 26px; }
+  .comparison { padding: 28px 6px; gap: 22px; }
+  .asset-row { padding: 9px 0; }
+  .event-toggle { min-height: 62px; padding-block: 11px; }
+  .timing-panel h3 { font-size: 26px; }
+  .ending { padding-block: 56px 44px; }
+}

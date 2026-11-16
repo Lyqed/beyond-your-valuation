@@ -43,7 +43,7 @@ for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
     assert.equal(await page.getByLabel(label, { exact: true }).inputValue(), expected);
     assert.equal(await page.getByLabel(label, { exact: true }).getAttribute('step'), 'any');
   }
-  await page.getByRole('button', { name: 'Show every step', exact: true }).click();
+  await page.locator('#exit').getByRole('button', { name: 'Show the calculation', exact: true }).click();
   assert.match(await page.locator('dialog').innerText(), /29,478,992\.91/);
   assert.match(await page.locator('dialog').innerText(), /2,261,250\.00/);
   await page.keyboard.press('Escape');
