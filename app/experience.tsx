@@ -52,17 +52,19 @@ export default function Experience() {
   const portfolio = useMemo(() => calculatePortfolio(scenario.portfolio), [scenario.portfolio]);
   const insurance = useMemo(() => calculateInsurance(scenario.insurance), [scenario.insurance]);
   const e = scenario.exit, p = scenario.portfolio, ins = scenario.insurance;
-  const boardGroups = boardView === 'ownership' ? [
+  const ownershipGroups = [
     { label: 'Founder', value: e.founderBps, color: 'var(--green)', display: pct(e.founderBps) },
     { label: 'Investors', value: e.investorBps, color: 'var(--lavender)', display: pct(e.investorBps) },
     { label: 'Team', value: e.teamBps, color: 'var(--peach)', display: pct(e.teamBps) },
     { label: 'Other', value: exit.otherBps, color: 'var(--pale)', display: pct(exit.otherBps) },
-  ] : [
+  ];
+  const proceedsGroups = [
     { label: 'Founder cash', value: exit.founderNetCents, color: 'var(--green)', display: money(exit.founderNetCents) },
     { label: 'Investors', value: exit.investorCents, color: 'var(--lavender)', display: money(exit.investorCents) },
     { label: 'Other holders', value: exit.teamCents + exit.otherCents, color: 'var(--peach)', display: money(exit.teamCents + exit.otherCents) },
     { label: 'Costs & tax', value: exit.feesCents + exit.taxCents, color: 'var(--pale)', display: money(exit.feesCents + exit.taxCents) },
   ];
+  const boardGroups = boardView === 'ownership' ? ownershipGroups : proceedsGroups;
   function updateExit(change: Partial<ExitInput>) { setActive('exit'); setScenario(s => ({ ...s, exit: { ...s.exit, ...change } })); }
   function updatePortfolio(change: Partial<PortfolioInput>) { setActive('portfolio'); setScenario(s => ({ ...s, portfolio: { ...s.portfolio, ...change } })); }
   function updateInsurance(change: Partial<InsuranceInput>) { setActive('insurance'); setScenario(s => ({ ...s, insurance: { ...s.insurance, ...change } })); }
@@ -171,7 +173,8 @@ export default function Experience() {
             <div className="board-sticker"><span>{boardView === 'ownership' ? 'Your share' : 'Your net cash'}</span><strong data-testid="board-value">{boardView === 'ownership' ? <>{e.founderBps / 100}<span>%</span></> : money(exit.founderNetCents)}</strong>{boardView === 'proceeds' ? <small>After costs and tax.</small> : null}</div>
           </div>
           <div className="board-details">
-            <div className="board-caption" data-view={boardView}>{boardGroups.map(group => <span key={group.label}><span className="board-caption-label"><i style={{ background: group.color }} />{group.label}</span><b>{group.display}</b></span>)}</div>
+            {/* Both captions share one cell, so the board keeps its height when the view changes. */}
+            <div className="board-captions">{([['ownership', ownershipGroups], ['proceeds', proceedsGroups]] as const).map(([view, groups]) => <div className="board-caption" data-view={view} aria-hidden={view === boardView ? undefined : true} key={view}>{groups.map(group => <span key={group.label}><span className="board-caption-label"><i style={{ background: group.color }} />{group.label}</span><b>{group.display}</b></span>)}</div>)}</div>
             <p className="board-note">Each tile is about 1%.</p>
           </div>
           </div>

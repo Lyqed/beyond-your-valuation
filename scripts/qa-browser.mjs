@@ -81,8 +81,13 @@ for (const [name, engine, width] of [['chromium', chromium, 1440], ['chromium', 
     await textIs(page, 'insurance-gap', '$450k');
     await textIs(page, 'board-value', '40%');
     assert.equal(await page.locator('.hero .tiles > i').count(), 100);
+    // The headline and the page below the board stay where they are when the board view changes.
+    const heroLayout = () => page.evaluate(() => [...document.querySelectorAll('.hero h1, .hero-question, .hero-copy .button, .chapter-nav')].map(element => { const box = element.getBoundingClientRect(); return [Math.round(box.left), Math.round(box.top + scrollY)]; }));
+    const ownershipLayout = await heroLayout();
     await page.getByRole('button', { name: 'After the deal', exact: true }).click();
     await textIs(page, 'board-value', '$29.4m');
+    assert.deepEqual(await heroLayout(), ownershipLayout, 'The hero moved when the board view changed');
+    assert.equal(await page.locator('.board-caption:visible').count(), 1);
     assert.match(await page.locator('.hero .tiles').getAttribute('aria-label'), /Founder cash \$29\.4m/);
     await page.screenshot({ path: `test-results/${name}-${width}-proceeds-board.png` });
     await page.getByRole('button', { name: 'Ownership', exact: true }).click();

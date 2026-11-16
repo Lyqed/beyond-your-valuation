@@ -932,3 +932,10 @@ footer p, footer > span, .footer-brand { font-size: 12px; }
   .timing-panel h3 { font-size: 26px; }
   .ending { padding-block: 56px 44px; }
 }
+
+/* The hero keeps one height in both board views, 16 November 2026.
+   Both captions sit in the same grid cell and only one is visible, so the
+   taller caption no longer pushes the centred headline when the view changes. */
+.board-captions { display: grid; }
+.board-captions > .board-caption { grid-area: 1 / 1; }
+.board-captions > .board-caption[aria-hidden="true"] { visibility: hidden; }

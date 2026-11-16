@@ -55,3 +55,20 @@ is unchanged.
   pixels, and `scripts/qa-saved-inputs.mjs` passes. Both were updated for the
   renamed calculation link and the currency sentence.
 - Desktop and phone-width captures of the whole page were inspected.
+
+## The hero no longer moves when the board view changes
+
+Later the same day Anton pointed out that the headline shifted when the board
+switched from Ownership to After the deal. The caption under the board wraps to
+one more line in the second view, which made the art column 24 to 50 pixels
+taller. On wide screens the headline is centred against that column, so it
+moved 12 to 24 pixels. On phones the headline stayed but everything below the
+board jumped by 50 pixels.
+
+Both captions are now rendered in one shared grid cell and only the current
+one is visible, so the board has one height in both views. `qa-browser.mjs`
+asserts that the headline, the question, the button and the chapter navigation
+keep their positions across the switch, and `scripts/qa-hero-shift.mjs`
+measures it at nine widths. Both pass in Chromium and WebKit with zero
+movement.
+
